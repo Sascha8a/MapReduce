@@ -33,13 +33,15 @@ grpc_dep = dependency('grpc', required : true)
 grpcpp_dep = dependency('grpc++', required : true)
 
 gen = generator(protoc, \
-  output    : ['@BASENAME@.pb.cc', '@BASENAME@.pb.h', '@BASENAME@.grpc.pb.cc', '@BASENAME@.grpc.pb.h'],
+  output    : ['@BASENAME@.pb.cc', '@BASENAME@.pb.h', '@BASENAME@.grpc.pb.cc', '@BASENAME@.grpc.pb.h',
+               '@BASENAME@_pb2.py'],
   arguments : ['--proto_path=@SOURCE_DIR@/src',
                '--plugin=protoc-gen-grpc=' + grpc_cpp_plugin.path(),
                '--grpc_out=@BUILD_DIR@',
                '--cpp_out=@BUILD_DIR@',
+               '--python_out=@SOURCE_DIR@',
                '@PLAINNAME@'])
-
+              
 # change proto file accordingly
 internal_proto = gen.process('src/internal.proto')
 # end protobuf

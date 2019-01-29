@@ -1,0 +1,12 @@
+data/server/src/master.cpp.i
+data/server/include/CLI11.hpp.i
+data/server/src/protobuf.cpp.i
+data/server/include/Master.hpp.i
+data/server/src/Master.cpp.i
+data/.hgignore.i
+data/tests/PseudoCode.py.i
+data/server/meson_options.txt.i
+data/server/src/helloworld.proto.i
+data/server/README.md.i
+data/server/src/cli.cpp.i
+data/server/src/dummy.proto.i

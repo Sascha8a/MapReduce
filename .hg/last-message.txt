@@ -1,1 +1,1 @@
-Initial commit, grpc and protobuf finally compile (yay)
+Server: Adds and implements rudimentary communication protocol between node and master; Implements sending and writing jobs to disk
