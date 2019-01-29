@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package mapreduce;
+
+enum CodeExt {
+  py = 0;
+  bin = 1;
+}
+
+message Job {
+  string job_id = 1;
+  string code = 2;
+  CodeExt ext = 3;
+  repeated string chunk = 4;
+}
+
+message JobRequest {
+  string job_id = 1;
+}
+
+message Empty {
+
+}
+
+service Master {
+
+}
+
+service Node {
+  rpc StartJob (Job) returns (Empty);
+  rpc GetJob (JobRequest) returns (Job);
+}
+
+service Worker {
+  
+}

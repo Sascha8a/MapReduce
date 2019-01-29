@@ -34,20 +34,31 @@ grpcpp_dep = dependency('grpc++', required : true)
 
 gen = generator(protoc, \
   output    : ['@BASENAME@.pb.cc', '@BASENAME@.pb.h', '@BASENAME@.grpc.pb.cc', '@BASENAME@.grpc.pb.h'],
-  arguments : ['--proto_path=@SOURCE_DIR@/src', '--plugin=protoc-gen-grpc=' + grpc_cpp_plugin.path(), '--grpc_out=@BUILD_DIR@', '--cpp_out=@BUILD_DIR@', '@PLAINNAME@'])
+  arguments : ['--proto_path=@SOURCE_DIR@/src',
+               '--plugin=protoc-gen-grpc=' + grpc_cpp_plugin.path(),
+               '--grpc_out=@BUILD_DIR@',
+               '--cpp_out=@BUILD_DIR@',
+               '@PLAINNAME@'])
 
 # change proto file accordingly
-helloworld = gen.process('src/helloworld.proto')
+internal_proto = gen.process('src/internal.proto')
 # end protobuf
 
 # subdir('SUBDIR1')
 
 inc_dir = include_directories('include')
-master_src = ['src/master.cpp', helloworld]
+master_src = ['src/master.cpp', internal_proto]
+node_src = ['src/node.cpp', 'src/Node.cpp', internal_proto]
 cli_src = ['src/cli.cpp']
 
 executable('master',
            sources : master_src,
+           include_directories : inc_dir,
+           dependencies : [thread_dep, protobuf_dep, grpc_dep, grpcpp_dep]
+          )
+
+executable('node',
+           sources : node_src,
            include_directories : inc_dir,
            dependencies : [thread_dep, protobuf_dep, grpc_dep, grpcpp_dep]
           )

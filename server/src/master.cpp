@@ -1,46 +1,53 @@
 #include <iostream>
+#include <sstream>
+#include <fstream>
 #include <thread>
-
 #include <grpcpp/grpcpp.h>
+#include <iostream>
 
-#include "Master.cpp"
-#include "helloworld.grpc.pb.h"
-#include "helloworld.pb.h"
+#include "internal.grpc.pb.h"
+#include "internal.pb.h"
+#include "Node.hpp"
 
-using grpc::Server;
-using grpc::ServerBuilder;
-using grpc::ServerContext;
-using grpc::Status;
-using helloworld::Greeter;
-using helloworld::HelloReply;
-using helloworld::HelloRequest;
-
-class GreeterServiceImpl final : public Greeter::Service
+std::string get_file()
 {
-  Status SayHello(ServerContext *context, const HelloRequest *request,
-                  HelloReply *reply) override
-  {
-    if (!context) {
-      return Status::CANCELLED;
-    }
-    std::string prefix("Hello ");
-    reply->set_message(prefix + request->name());
-    return Status::OK;
-  }
-};
+  std::ifstream fstream;
+  std::stringstream sstream;
 
-//int main(int argc, char* argv[]) {
+  fstream.open("code.py");
+  sstream << fstream.rdbuf();
+
+  return sstream.str();
+}
+
 int main()
 {
-  GreeterServiceImpl service;
-  ServerBuilder builder;
-  builder.AddListeningPort("0.0.0.0:50051", grpc::InsecureServerCredentials());
-  builder.RegisterService(&service);
-  std::unique_ptr<Server> server(builder.BuildAndStart());
-  server->Wait();
+  auto channel{grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials())};
+  auto stub = mapreduce::Node::NewStub(channel);
 
-  Master m{};
-  m.start();
+  grpc::ClientContext context;
+  mapreduce::Job job;
+
+  const std::string code{get_file()};
+
+  job.set_job_id("aaa");
+  job.set_code(code);
+  job.add_chunk("a a b b c c"); // a:2 b:2 c:2
+  job.add_chunk("a b c");       // a:1 b:1 c:1
+  job.add_chunk("a");           // a:1
+                                // a:4 b:3 c:3
+
+  mapreduce::Empty response;
+  grpc::Status status = stub->StartJob(&context, job, &response);
+
+  if (status.ok())
+  {
+    std::cout << "Success" << std::endl;
+  }
+  else
+  {
+    std::cout << "ERROR" << std::endl;
+  }
 
   return 0;
 }
