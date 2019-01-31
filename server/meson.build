@@ -28,15 +28,17 @@ add_global_arguments('-I' + get_option('spdlog_include_dir'), language : 'cpp')
 # protobuf: must be installed independently and has to be found...
 protoc = find_program('protoc', required : true)
 grpc_cpp_plugin = find_program('grpc_cpp_plugin', required : true)
+grpc_python_plugin = find_program('grpc_python_plugin', required : true)
 protobuf_dep = dependency('protobuf', required : true)
 grpc_dep = dependency('grpc', required : true)
 grpcpp_dep = dependency('grpc++', required : true)
 
 gen = generator(protoc, \
   output    : ['@BASENAME@.pb.cc', '@BASENAME@.pb.h', '@BASENAME@.grpc.pb.cc', '@BASENAME@.grpc.pb.h',
-               '@BASENAME@_pb2.py'],
+               '@BASENAME@_pb2.py', '@BASENAME@_pb2_grpc.py'],
   arguments : ['--proto_path=@SOURCE_DIR@/src',
                '--plugin=protoc-gen-grpc=' + grpc_cpp_plugin.path(),
+        #        '--plugin=protoc-gen-grpc=' + grpc_python_plugin.path(),
                '--grpc_out=@BUILD_DIR@',
                '--cpp_out=@BUILD_DIR@',
                '--python_out=@SOURCE_DIR@',

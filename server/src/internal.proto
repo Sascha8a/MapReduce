@@ -7,11 +7,22 @@ enum CodeExt {
   bin = 1;
 }
 
+message Pair {
+  string key = 1;
+  int64 value = 2;
+}
+
+message MapResults {
+  string job_id = 1;
+  repeated Pair kv_p = 2;
+}
+
 message Job {
   string job_id = 1;
   string code = 2;
   CodeExt ext = 3;
   repeated string chunk = 4;
+  repeated Pair pairs = 5;
 }
 
 message JobRequest {
@@ -29,6 +40,7 @@ service Master {
 service Node {
   rpc StartJob (Job) returns (Empty);
   rpc GetJob (JobRequest) returns (Job);
+  rpc MappedJob (MapResults) returns (Empty);
 }
 
 service Worker {
