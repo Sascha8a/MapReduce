@@ -84,7 +84,7 @@ grpc::Status Node::GetJob(grpc::ServerContext *context, const mapreduce::JobRequ
   console->info(request->job_id() + " request received from " + context->peer());
 
   mapreduce::Job job = _jobs.at(request->job_id());
-  response->set_job_id(job.job_id());
+  response->CopyFrom(job);
 
   console->info(request->job_id() + " responded with job to " + context->peer());
 
@@ -94,9 +94,10 @@ grpc::Status Node::GetJob(grpc::ServerContext *context, const mapreduce::JobRequ
 grpc::Status Node::MappedJob(grpc::ServerContext *context, const mapreduce::MapResults *results, mapreduce::Empty *response)
 {
   const auto console{spdlog::get("console")};
-  console->info(request->job_id() + " mapped results received from " + context->peer());
+  console->info(results->job_id() + " mapped results received from " + context->peer());
 
-  _jobs[request->job_id()].clear_chunk();
-
+  _jobs[results->job_id()].clear_chunks();
+  
+  response->Clear();
   return grpc::Status::OK;
 }

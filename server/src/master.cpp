@@ -32,9 +32,9 @@ int main()
 
   job.set_job_id("aaa");
   job.set_code(code);
-  job.add_chunk("a a b b c c"); // a:2 b:2 c:2
-  job.add_chunk("a b c");       // a:1 b:1 c:1
-  job.add_chunk("a");           // a:1
+  job.add_chunks("a a b b c c"); // a:2 b:2 c:2
+  job.add_chunks("a b c");       // a:1 b:1 c:1
+  job.add_chunks("a");           // a:1
                                 // a:4 b:3 c:3
 
   mapreduce::Empty response;

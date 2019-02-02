@@ -14,5 +14,5 @@ private:
 public:
   grpc::Status StartJob(grpc::ServerContext *context, const mapreduce::Job *job, mapreduce::Empty *response) override;
   grpc::Status GetJob(grpc::ServerContext *context, const mapreduce::JobRequest *request, mapreduce::Job *response) override;
-  grpc::Status MappedJob#(grpc::ServerContext *context, const mapreduce::MapResults *request, mapreduce::Empty *response) override;
+  grpc::Status MappedJob(grpc::ServerContext *context, const mapreduce::MapResults *request, mapreduce::Empty *response) override;
 };

@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='internal.proto',
   package='mapreduce',
   syntax='proto3',
-  serialized_pb=_b('\n\x0einternal.proto\x12\tmapreduce\"S\n\x03Job\x12\x0e\n\x06job_id\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x1f\n\x03\x65xt\x18\x03 \x01(\x0e\x32\x12.mapreduce.CodeExt\x12\r\n\x05\x63hunk\x18\x04 \x03(\t\"\x1c\n\nJobRequest\x12\x0e\n\x06job_id\x18\x01 \x01(\t\"\x07\n\x05\x45mpty*\x1a\n\x07\x43odeExt\x12\x06\n\x02py\x10\x00\x12\x07\n\x03\x62in\x10\x01\x32\x08\n\x06Master2e\n\x04Node\x12,\n\x08StartJob\x12\x0e.mapreduce.Job\x1a\x10.mapreduce.Empty\x12/\n\x06GetJob\x12\x15.mapreduce.JobRequest\x1a\x0e.mapreduce.Job2\x08\n\x06Workerb\x06proto3')
+  serialized_pb=_b('\n\x0einternal.proto\x12\tmapreduce\"{\n\nMapResults\x12\x0e\n\x06job_id\x18\x01 \x01(\t\x12/\n\x05pairs\x18\x05 \x03(\x0b\x32 .mapreduce.MapResults.PairsEntry\x1a,\n\nPairsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\"\xac\x01\n\x03Job\x12\x0e\n\x06job_id\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x1f\n\x03\x65xt\x18\x03 \x01(\x0e\x32\x12.mapreduce.CodeExt\x12\x0e\n\x06\x63hunks\x18\x04 \x03(\t\x12(\n\x05pairs\x18\x05 \x03(\x0b\x32\x19.mapreduce.Job.PairsEntry\x1a,\n\nPairsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\"\x1c\n\nJobRequest\x12\x0e\n\x06job_id\x18\x01 \x01(\t\"\x07\n\x05\x45mpty*\x1a\n\x07\x43odeExt\x12\x06\n\x02py\x10\x00\x12\x07\n\x03\x62in\x10\x01\x32\x08\n\x06Master2\x9b\x01\n\x04Node\x12,\n\x08StartJob\x12\x0e.mapreduce.Job\x1a\x10.mapreduce.Empty\x12/\n\x06GetJob\x12\x15.mapreduce.JobRequest\x1a\x0e.mapreduce.Job\x12\x34\n\tMappedJob\x12\x15.mapreduce.MapResults\x1a\x10.mapreduce.Empty2\x08\n\x06Workerb\x06proto3')
 )
 
 _CODEEXT = _descriptor.EnumDescriptor(
@@ -40,8 +40,8 @@ _CODEEXT = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=153,
-  serialized_end=179,
+  serialized_start=368,
+  serialized_end=394,
 )
 _sym_db.RegisterEnumDescriptor(_CODEEXT)
 
@@ -50,6 +50,118 @@ py = 0
 bin = 1
 
 
+
+_MAPRESULTS_PAIRSENTRY = _descriptor.Descriptor(
+  name='PairsEntry',
+  full_name='mapreduce.MapResults.PairsEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='mapreduce.MapResults.PairsEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='mapreduce.MapResults.PairsEntry.value', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=_descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b('8\001')),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=108,
+  serialized_end=152,
+)
+
+_MAPRESULTS = _descriptor.Descriptor(
+  name='MapResults',
+  full_name='mapreduce.MapResults',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='job_id', full_name='mapreduce.MapResults.job_id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='pairs', full_name='mapreduce.MapResults.pairs', index=1,
+      number=5, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[_MAPRESULTS_PAIRSENTRY, ],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=29,
+  serialized_end=152,
+)
+
+
+_JOB_PAIRSENTRY = _descriptor.Descriptor(
+  name='PairsEntry',
+  full_name='mapreduce.Job.PairsEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='mapreduce.Job.PairsEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='mapreduce.Job.PairsEntry.value', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=_descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b('8\001')),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=108,
+  serialized_end=152,
+)
 
 _JOB = _descriptor.Descriptor(
   name='Job',
@@ -80,8 +192,15 @@ _JOB = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='chunk', full_name='mapreduce.Job.chunk', index=3,
+      name='chunks', full_name='mapreduce.Job.chunks', index=3,
       number=4, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='pairs', full_name='mapreduce.Job.pairs', index=4,
+      number=5, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -89,7 +208,7 @@ _JOB = _descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[],
+  nested_types=[_JOB_PAIRSENTRY, ],
   enum_types=[
   ],
   options=None,
@@ -98,8 +217,8 @@ _JOB = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=29,
-  serialized_end=112,
+  serialized_start=155,
+  serialized_end=327,
 )
 
 
@@ -129,8 +248,8 @@ _JOBREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=114,
-  serialized_end=142,
+  serialized_start=329,
+  serialized_end=357,
 )
 
 
@@ -153,23 +272,51 @@ _EMPTY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=144,
-  serialized_end=151,
+  serialized_start=359,
+  serialized_end=366,
 )
 
+_MAPRESULTS_PAIRSENTRY.containing_type = _MAPRESULTS
+_MAPRESULTS.fields_by_name['pairs'].message_type = _MAPRESULTS_PAIRSENTRY
+_JOB_PAIRSENTRY.containing_type = _JOB
 _JOB.fields_by_name['ext'].enum_type = _CODEEXT
+_JOB.fields_by_name['pairs'].message_type = _JOB_PAIRSENTRY
+DESCRIPTOR.message_types_by_name['MapResults'] = _MAPRESULTS
 DESCRIPTOR.message_types_by_name['Job'] = _JOB
 DESCRIPTOR.message_types_by_name['JobRequest'] = _JOBREQUEST
 DESCRIPTOR.message_types_by_name['Empty'] = _EMPTY
 DESCRIPTOR.enum_types_by_name['CodeExt'] = _CODEEXT
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
+MapResults = _reflection.GeneratedProtocolMessageType('MapResults', (_message.Message,), dict(
+
+  PairsEntry = _reflection.GeneratedProtocolMessageType('PairsEntry', (_message.Message,), dict(
+    DESCRIPTOR = _MAPRESULTS_PAIRSENTRY,
+    __module__ = 'internal_pb2'
+    # @@protoc_insertion_point(class_scope:mapreduce.MapResults.PairsEntry)
+    ))
+  ,
+  DESCRIPTOR = _MAPRESULTS,
+  __module__ = 'internal_pb2'
+  # @@protoc_insertion_point(class_scope:mapreduce.MapResults)
+  ))
+_sym_db.RegisterMessage(MapResults)
+_sym_db.RegisterMessage(MapResults.PairsEntry)
+
 Job = _reflection.GeneratedProtocolMessageType('Job', (_message.Message,), dict(
+
+  PairsEntry = _reflection.GeneratedProtocolMessageType('PairsEntry', (_message.Message,), dict(
+    DESCRIPTOR = _JOB_PAIRSENTRY,
+    __module__ = 'internal_pb2'
+    # @@protoc_insertion_point(class_scope:mapreduce.Job.PairsEntry)
+    ))
+  ,
   DESCRIPTOR = _JOB,
   __module__ = 'internal_pb2'
   # @@protoc_insertion_point(class_scope:mapreduce.Job)
   ))
 _sym_db.RegisterMessage(Job)
+_sym_db.RegisterMessage(Job.PairsEntry)
 
 JobRequest = _reflection.GeneratedProtocolMessageType('JobRequest', (_message.Message,), dict(
   DESCRIPTOR = _JOBREQUEST,
@@ -186,6 +333,10 @@ Empty = _reflection.GeneratedProtocolMessageType('Empty', (_message.Message,), d
 _sym_db.RegisterMessage(Empty)
 
 
+_MAPRESULTS_PAIRSENTRY.has_options = True
+_MAPRESULTS_PAIRSENTRY._options = _descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b('8\001'))
+_JOB_PAIRSENTRY.has_options = True
+_JOB_PAIRSENTRY._options = _descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b('8\001'))
 
 _MASTER = _descriptor.ServiceDescriptor(
   name='Master',
@@ -193,8 +344,8 @@ _MASTER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=181,
-  serialized_end=189,
+  serialized_start=396,
+  serialized_end=404,
   methods=[
 ])
 _sym_db.RegisterServiceDescriptor(_MASTER)
@@ -208,8 +359,8 @@ _NODE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=1,
   options=None,
-  serialized_start=191,
-  serialized_end=292,
+  serialized_start=407,
+  serialized_end=562,
   methods=[
   _descriptor.MethodDescriptor(
     name='StartJob',
@@ -229,6 +380,15 @@ _NODE = _descriptor.ServiceDescriptor(
     output_type=_JOB,
     options=None,
   ),
+  _descriptor.MethodDescriptor(
+    name='MappedJob',
+    full_name='mapreduce.Node.MappedJob',
+    index=2,
+    containing_service=None,
+    input_type=_MAPRESULTS,
+    output_type=_EMPTY,
+    options=None,
+  ),
 ])
 _sym_db.RegisterServiceDescriptor(_NODE)
 
@@ -241,8 +401,8 @@ _WORKER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=2,
   options=None,
-  serialized_start=294,
-  serialized_end=302,
+  serialized_start=564,
+  serialized_end=572,
   methods=[
 ])
 _sym_db.RegisterServiceDescriptor(_WORKER)

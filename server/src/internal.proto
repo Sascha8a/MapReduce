@@ -7,22 +7,17 @@ enum CodeExt {
   bin = 1;
 }
 
-message Pair {
-  string key = 1;
-  int64 value = 2;
-}
-
 message MapResults {
   string job_id = 1;
-  repeated Pair kv_p = 2;
+  map<string, int32> pairs = 5;
 }
 
 message Job {
   string job_id = 1;
   string code = 2;
   CodeExt ext = 3;
-  repeated string chunk = 4;
-  repeated Pair pairs = 5;
+  repeated string chunks = 4;
+  map<string, int32> pairs = 5;
 }
 
 message JobRequest {
