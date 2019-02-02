@@ -48,56 +48,80 @@ void exec(const char *cmd)
   }
 }
 
-void start_code_file(const mapreduce::Job *job, const std::string code_localtion)
+void start_code_file(const mapreduce::Job *job, const std::string code_localtion, const int num_workers)
 {
-  switch (job->ext())
-  {
-  case 0:
-    exec(("python3 " + code_localtion).c_str());
-    break;
+  const auto console{spdlog::get("console")};
 
-  default:
-    break;
+  for (int i = 0; i < num_workers; i++)
+  {
+    switch (job->ext())
+    {
+    case 0:
+      console->info(job->job_id() + " python worker started");
+      exec(("python3 " + code_localtion).c_str());
+      break;
+
+    default:
+      break;
+    }
   }
 }
 
-grpc::Status Node::StartJob(grpc::ServerContext *context, const mapreduce::Job *job, mapreduce::Empty *response)
+grpc::Status Node::JobStart(grpc::ServerContext *context, const mapreduce::Job *job, mapreduce::Empty *response)
 {
   const auto console{spdlog::get("console")};
-  console->info(job->job_id() + " received from " + context->peer());
+  console->info("New job " + job->job_id() + " received from " + context->peer());
 
   const std::string code_location{write_code_file(job)};
   console->info(job->job_id() + " written to disk: " + code_location);
 
-  start_code_file(job, code_location);
-  console->info(job->job_id() + " started");
-
+  _workers[job->job_id()] = job->chunks_size();
   _jobs.insert(std::pair<std::string, mapreduce::Job>(job->job_id(), *job));
+
+  start_code_file(job, code_location, job->chunks_size());
   response->Clear();
 
   return grpc::Status::OK;
 }
 
-grpc::Status Node::GetJob(grpc::ServerContext *context, const mapreduce::JobRequest *request, mapreduce::Job *response)
+grpc::Status Node::JobGet(grpc::ServerContext *context, const mapreduce::JobRequest *request, mapreduce::Job *response)
 {
   const auto console{spdlog::get("console")};
   console->info(request->job_id() + " request received from " + context->peer());
 
-  mapreduce::Job job = _jobs.at(request->job_id());
-  response->CopyFrom(job);
+  mapreduce::Job job{_jobs[request->job_id()]};
+  const int last_chunk_index{job.chunks_size() - 1};
+  response->set_job_id(job.job_id());
+  response->add_chunks(job.chunks(last_chunk_index));
+  _jobs[request->job_id()].mutable_chunks()->RemoveLast();
 
   console->info(request->job_id() + " responded with job to " + context->peer());
 
   return grpc::Status::OK;
 }
 
-grpc::Status Node::MappedJob(grpc::ServerContext *context, const mapreduce::MapResults *results, mapreduce::Empty *response)
+grpc::Status Node::JobMapped(grpc::ServerContext *context, const mapreduce::MappedJob *results, mapreduce::Empty *response)
 {
+  _workers[results->job_id()] -= 1;
+  const u_int8_t workers_left{_workers[results->job_id()]};
+
   const auto console{spdlog::get("console")};
   console->info(results->job_id() + " mapped results received from " + context->peer());
+  console->info(results->job_id() + ": " + std::to_string(workers_left) + " workers left");
 
-  _jobs[results->job_id()].clear_chunks();
-  
+  for (auto &&pair : results->pairs())
+  {
+    console->info(pair.key() + " " + std::to_string(pair.value()));
+    _mapresults[results->job_id()].push_back(pair);
+  }
+
+  if (!workers_left)
+  {
+    _jobs[results->job_id()].clear_chunks();
+    _workers.erase(results->job_id());
+    console->info(results->job_id() + ": " + std::to_string(_mapresults[results->job_id()].size()) + " results");
+  }
+
   response->Clear();
   return grpc::Status::OK;
 }

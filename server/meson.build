@@ -27,6 +27,7 @@ add_global_arguments('-I' + get_option('spdlog_include_dir'), language : 'cpp')
 # begin protobuf: https://developers.google.com/protocol-buffers/
 # protobuf: must be installed independently and has to be found...
 protoc = find_program('protoc', required : true)
+python3 = find_program('python3', required : true)
 grpc_cpp_plugin = find_program('grpc_cpp_plugin', required : true)
 grpc_python_plugin = find_program('grpc_python_plugin', required : true)
 protobuf_dep = dependency('protobuf', required : true)
@@ -34,25 +35,31 @@ grpc_dep = dependency('grpc', required : true)
 grpcpp_dep = dependency('grpc++', required : true)
 
 gen = generator(protoc, \
-  output    : ['@BASENAME@.pb.cc', '@BASENAME@.pb.h', '@BASENAME@.grpc.pb.cc', '@BASENAME@.grpc.pb.h',
-               '@BASENAME@_pb2.py', '@BASENAME@_pb2_grpc.py'],
+  output    : ['@BASENAME@.pb.cc', '@BASENAME@.pb.h', '@BASENAME@.grpc.pb.cc', '@BASENAME@.grpc.pb.h'],
   arguments : ['--proto_path=@SOURCE_DIR@/src',
                '--plugin=protoc-gen-grpc=' + grpc_cpp_plugin.path(),
-        #        '--plugin=protoc-gen-grpc=' + grpc_python_plugin.path(),
                '--grpc_out=@BUILD_DIR@',
                '--cpp_out=@BUILD_DIR@',
+               '@PLAINNAME@'])
+
+gen_py = generator(python3, \
+  output    : ['@BASENAME@_pb2.py', '@BASENAME@_pb2_grpc.py'],
+  arguments : ['-mgrpc_tools.protoc',
+               '--proto_path=@SOURCE_DIR@/src',
+               '--grpc_python_out=@SOURCE_DIR@',
                '--python_out=@SOURCE_DIR@',
                '@PLAINNAME@'])
-              
+
 # change proto file accordingly
 internal_proto = gen.process('src/internal.proto')
+internal_proto_py = gen_py.process('src/internal.proto')
 # end protobuf
 
 # subdir('SUBDIR1')
 
 inc_dir = include_directories('include')
-master_src = ['src/master.cpp', internal_proto]
-node_src = ['src/node.cpp', 'src/Node.cpp', internal_proto]
+master_src = ['src/master.cpp', internal_proto, internal_proto_py]
+node_src = ['src/node.cpp', 'src/Node.cpp', internal_proto, internal_proto_py]
 cli_src = ['src/cli.cpp']
 
 executable('master',
