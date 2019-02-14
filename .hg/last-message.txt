@@ -1,1 +1,1 @@
-API: Start on Python API to create Workers (Map, Reduce); Server: Adds logging of received results from Workers
+Starts with ausarbeitung
