@@ -29,12 +29,16 @@ message JobRequest {
   string job_id = 1;
 }
 
+message JobMapCount {
+  map<string, int32> key_count = 1;
+}
+
 message Empty {
 
 }
 
 service Master {
-
+  rpc JobMapFinished (Request) returns (Response);
 }
 
 service Node {
