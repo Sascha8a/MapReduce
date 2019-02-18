@@ -1,1 +1,1 @@
-API: Adds example usage of Worker(); Server: Reduce message sent to workers, Distributes chunks correctly
+Starts with ausarbeitung
