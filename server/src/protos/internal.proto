@@ -7,6 +7,10 @@ enum CodeExt {
   bin = 1;
 }
 
+message NewNode {
+  string connstr = 1;
+}
+
 message KeyValuePair {
   string key = 1;
   int32 value = 2;
@@ -38,7 +42,7 @@ message Empty {
 }
 
 service Master {
-  rpc JobMapFinished (Request) returns (Response);
+  rpc RegisterNode (NewNode) returns (Empty);
 }
 
 service Node {
