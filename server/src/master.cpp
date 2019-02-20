@@ -7,50 +7,23 @@
 
 #include "internal.grpc.pb.h"
 #include "internal.pb.h"
-#include "Node.hpp"
-
-std::string get_file()
-{
-  std::ifstream fstream;
-  std::stringstream sstream;
-
-  fstream.open("impl.py");
-  sstream << fstream.rdbuf();
-
-  return sstream.str();
-}
+#include "Master.hpp"
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 int main()
 {
-  auto channel{grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials())};
-  auto stub = mapreduce::Node::NewStub(channel);
+  std::string server_address("0.0.0.0:50050"); //TODO: Config file, CLI
 
-  grpc::ClientContext context;
-  mapreduce::Job job;
+  Master service;
+  grpc::ServerBuilder builder;
+  builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
+  builder.RegisterService(&service);
 
-  const std::string code{get_file()};
+  std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+  spdlog::info("Master: " + server_address);
 
-  job.set_job_id("aaa");
-  job.set_code(code);
-
-  std::cout << code << std::endl;
-
-  job.add_chunks("a a b b c c"); // a:2 b:2 c:2
-  job.add_chunks("a b c");       // a:1 b:1 c:1
-  job.add_chunks("a");           // a:1
-                                // a:4 b:3 c:3
-
-  mapreduce::Empty response;
-  grpc::Status status = stub->JobStart(&context, job, &response);
-
-  if (status.ok())
-  {
-    std::cout << "Success" << std::endl;
-  }
-  else
-  {
-    std::cout << "ERROR" << std::endl;
-  }
+  server->Wait();
 
   return 0;
 }

@@ -21,6 +21,11 @@ message MappedJob {
   repeated KeyValuePair pairs = 4;
 }
 
+message NewJob {
+  string code = 1;
+  string data = 2;
+}
+
 message Job {
   string job_id = 1;
   string code = 2;
@@ -43,6 +48,7 @@ message Empty {
 
 service Master {
   rpc RegisterNode (NewNode) returns (Empty);
+  rpc JobStart (NewJob) returns (Empty);
 }
 
 service Node {
@@ -52,5 +58,5 @@ service Node {
 }
 
 service Worker {
-  
+
 }

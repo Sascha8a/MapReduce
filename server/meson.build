@@ -58,9 +58,9 @@ internal_proto_py = gen_py.process('src/protos/internal.proto')
 # subdir('SUBDIR1')
 
 inc_dir = include_directories('include')
-master_src = ['src/master.cpp', internal_proto, internal_proto_py]
+master_src = ['src/master.cpp', 'src/Master.cpp', internal_proto, internal_proto_py]
 node_src = ['src/node.cpp', 'src/Node.cpp', internal_proto, internal_proto_py]
-cli_src = ['src/cli.cpp']
+cli_src = ['src/cli.cpp', internal_proto, internal_proto_py]
 
 executable('master',
            sources : master_src,
@@ -77,5 +77,5 @@ executable('node',
 executable('cli',
            sources : cli_src,
            include_directories : inc_dir,
-           dependencies : [thread_dep, protobuf_dep]
+           dependencies : [thread_dep, protobuf_dep, grpc_dep, grpcpp_dep]
           )

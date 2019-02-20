@@ -1,3 +1,4 @@
+=======
 data/api/python/Worker.py.i
 data/docs/main.blg.i
 data/docs/TeX_files/chapter01.tex.i
@@ -10,30 +11,26 @@ data/docs/main.pdf.i
 data/docs/main.log.i
 data/docs/main.tex.i
 data/docs/TeX_files/chapter02.tex.i
-data/docs/TeX_files/chapter02.aux.i
-data/server/README.md.i
 data/server/src/Master.cpp.i
+data/server/README.md.i
+data/docs/TeX_files/chapter02.aux.i
 data/server/src/Node.cpp.i
 data/server/include/Node.hpp.i
 data/server/include/CLI11.hpp.i
-<<<<<<< HEAD
 data/server/internal_pb2_grpc.py.i
-=======
+data/server/include/Master.hpp.i
 data/server/src/internal.proto.i
+data/docs/main.synctex.gz.i
 data/server/meson_options.txt.i
-<<<<<<< HEAD
-data/server/src/protobuf.cpp.i
-data/api/python/internal_pb2_grpc.py.i
-data/server/src/dummy.proto.i
-=======
 data/docs/main.aux.i
 data/server/src/protobuf.cpp.i
 data/docs/images/Phases.png.i
 data/api/python/internal_pb2_grpc.py.i
 data/server/src/dummy.proto.i
-data/docs/main.synctex.gz.i
+data/server/src/protos/internal.proto.i
 data/docs/main.toc.i
 >>>>>>> ad9b52fc2d98903678896033d279bd54f7db6ca8
 data/api/python/impl.py.i
 data/api/python/internal_pb2.py.i
 data/server/src/cli.cpp.i
+<<<<<<< HEAD
