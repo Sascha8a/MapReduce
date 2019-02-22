@@ -1,4 +1,5 @@
 =======
+data/server/src/FIFOScheduler.cpp.i
 data/api/python/Worker.py.i
 data/docs/main.blg.i
 data/docs/TeX_files/chapter01.tex.i
@@ -16,17 +17,22 @@ data/server/README.md.i
 data/docs/TeX_files/chapter02.aux.i
 data/server/src/Node.cpp.i
 data/server/include/Node.hpp.i
+data/server/include/Scheduler.hpp.i
 data/server/include/CLI11.hpp.i
 data/server/internal_pb2_grpc.py.i
+data/server/include/FIFOScheduler.hpp.i
 data/server/include/Master.hpp.i
 data/server/src/internal.proto.i
 data/docs/main.synctex.gz.i
 data/server/meson_options.txt.i
 data/docs/main.aux.i
+data/server/include/Task.hpp.i
 data/server/src/protobuf.cpp.i
 data/docs/images/Phases.png.i
 data/api/python/internal_pb2_grpc.py.i
 data/server/src/dummy.proto.i
+data/server/src/Scheduler.cpp.i
+data/server/compile_commands.json.i
 data/server/src/protos/internal.proto.i
 data/docs/main.toc.i
 >>>>>>> ad9b52fc2d98903678896033d279bd54f7db6ca8

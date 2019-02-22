@@ -1,0 +1,57 @@
+[
+  {
+    "directory": "/home/sascha/workspace/NVS/MapReduce/server/build",
+    "command": "c++ -Imaster@exe -I. -I.. -I../include -I/usr/local/include -I/usr/include/spdlog/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -Wextra -Wpedantic -Werror -std=c++14 -g -Wl,--start-group -lpthread -Wl,--end-group -pthread  -MD -MQ 'master@exe/meson-generated_internal.pb.cc.o' -MF 'master@exe/meson-generated_internal.pb.cc.o.d' -o 'master@exe/meson-generated_internal.pb.cc.o' -c 'master@exe/internal.pb.cc'",
+    "file": "master@exe/internal.pb.cc"
+  },
+  {
+    "directory": "/home/sascha/workspace/NVS/MapReduce/server/build",
+    "command": "c++ -Imaster@exe -I. -I.. -I../include -I/usr/local/include -I/usr/include/spdlog/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -Wextra -Wpedantic -Werror -std=c++14 -g -Wl,--start-group -lpthread -Wl,--end-group -pthread  -MD -MQ 'master@exe/meson-generated_internal.grpc.pb.cc.o' -MF 'master@exe/meson-generated_internal.grpc.pb.cc.o.d' -o 'master@exe/meson-generated_internal.grpc.pb.cc.o' -c 'master@exe/internal.grpc.pb.cc'",
+    "file": "master@exe/internal.grpc.pb.cc"
+  },
+  {
+    "directory": "/home/sascha/workspace/NVS/MapReduce/server/build",
+    "command": "c++ -Imaster@exe -I. -I.. -I../include -I/usr/local/include -I/usr/include/spdlog/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -Wextra -Wpedantic -Werror -std=c++14 -g -Wl,--start-group -lpthread -Wl,--end-group -pthread  -MD -MQ 'master@exe/src_master.cpp.o' -MF 'master@exe/src_master.cpp.o.d' -o 'master@exe/src_master.cpp.o' -c ../src/master.cpp",
+    "file": "../src/master.cpp"
+  },
+  {
+    "directory": "/home/sascha/workspace/NVS/MapReduce/server/build",
+    "command": "c++ -Imaster@exe -I. -I.. -I../include -I/usr/local/include -I/usr/include/spdlog/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -Wextra -Wpedantic -Werror -std=c++14 -g -Wl,--start-group -lpthread -Wl,--end-group -pthread  -MD -MQ 'master@exe/src_Master.cpp.o' -MF 'master@exe/src_Master.cpp.o.d' -o 'master@exe/src_Master.cpp.o' -c ../src/Master.cpp",
+    "file": "../src/Master.cpp"
+  },
+  {
+    "directory": "/home/sascha/workspace/NVS/MapReduce/server/build",
+    "command": "c++ -Inode@exe -I. -I.. -I../include -I/usr/local/include -I/usr/include/spdlog/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -Wextra -Wpedantic -Werror -std=c++14 -g -Wl,--start-group -lpthread -Wl,--end-group -pthread  -MD -MQ 'node@exe/meson-generated_internal.pb.cc.o' -MF 'node@exe/meson-generated_internal.pb.cc.o.d' -o 'node@exe/meson-generated_internal.pb.cc.o' -c 'node@exe/internal.pb.cc'",
+    "file": "node@exe/internal.pb.cc"
+  },
+  {
+    "directory": "/home/sascha/workspace/NVS/MapReduce/server/build",
+    "command": "c++ -Inode@exe -I. -I.. -I../include -I/usr/local/include -I/usr/include/spdlog/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -Wextra -Wpedantic -Werror -std=c++14 -g -Wl,--start-group -lpthread -Wl,--end-group -pthread  -MD -MQ 'node@exe/meson-generated_internal.grpc.pb.cc.o' -MF 'node@exe/meson-generated_internal.grpc.pb.cc.o.d' -o 'node@exe/meson-generated_internal.grpc.pb.cc.o' -c 'node@exe/internal.grpc.pb.cc'",
+    "file": "node@exe/internal.grpc.pb.cc"
+  },
+  {
+    "directory": "/home/sascha/workspace/NVS/MapReduce/server/build",
+    "command": "c++ -Inode@exe -I. -I.. -I../include -I/usr/local/include -I/usr/include/spdlog/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -Wextra -Wpedantic -Werror -std=c++14 -g -Wl,--start-group -lpthread -Wl,--end-group -pthread  -MD -MQ 'node@exe/src_node.cpp.o' -MF 'node@exe/src_node.cpp.o.d' -o 'node@exe/src_node.cpp.o' -c ../src/node.cpp",
+    "file": "../src/node.cpp"
+  },
+  {
+    "directory": "/home/sascha/workspace/NVS/MapReduce/server/build",
+    "command": "c++ -Inode@exe -I. -I.. -I../include -I/usr/local/include -I/usr/include/spdlog/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -Wextra -Wpedantic -Werror -std=c++14 -g -Wl,--start-group -lpthread -Wl,--end-group -pthread  -MD -MQ 'node@exe/src_Node.cpp.o' -MF 'node@exe/src_Node.cpp.o.d' -o 'node@exe/src_Node.cpp.o' -c ../src/Node.cpp",
+    "file": "../src/Node.cpp"
+  },
+  {
+    "directory": "/home/sascha/workspace/NVS/MapReduce/server/build",
+    "command": "c++ -Icli@exe -I. -I.. -I../include -I/usr/local/include -I/usr/include/spdlog/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -Wextra -Wpedantic -Werror -std=c++14 -g -Wl,--start-group -lpthread -Wl,--end-group -pthread  -MD -MQ 'cli@exe/meson-generated_internal.pb.cc.o' -MF 'cli@exe/meson-generated_internal.pb.cc.o.d' -o 'cli@exe/meson-generated_internal.pb.cc.o' -c 'cli@exe/internal.pb.cc'",
+    "file": "cli@exe/internal.pb.cc"
+  },
+  {
+    "directory": "/home/sascha/workspace/NVS/MapReduce/server/build",
+    "command": "c++ -Icli@exe -I. -I.. -I../include -I/usr/local/include -I/usr/include/spdlog/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -Wextra -Wpedantic -Werror -std=c++14 -g -Wl,--start-group -lpthread -Wl,--end-group -pthread  -MD -MQ 'cli@exe/meson-generated_internal.grpc.pb.cc.o' -MF 'cli@exe/meson-generated_internal.grpc.pb.cc.o.d' -o 'cli@exe/meson-generated_internal.grpc.pb.cc.o' -c 'cli@exe/internal.grpc.pb.cc'",
+    "file": "cli@exe/internal.grpc.pb.cc"
+  },
+  {
+    "directory": "/home/sascha/workspace/NVS/MapReduce/server/build",
+    "command": "c++ -Icli@exe -I. -I.. -I../include -I/usr/local/include -I/usr/include/spdlog/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -Wextra -Wpedantic -Werror -std=c++14 -g -Wl,--start-group -lpthread -Wl,--end-group -pthread  -MD -MQ 'cli@exe/src_cli.cpp.o' -MF 'cli@exe/src_cli.cpp.o.d' -o 'cli@exe/src_cli.cpp.o' -c ../src/cli.cpp",
+    "file": "../src/cli.cpp"
+  }
+]
