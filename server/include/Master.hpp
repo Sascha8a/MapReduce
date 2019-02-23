@@ -3,6 +3,7 @@
 #include <grpcpp/grpcpp.h>
 #include <thread>
 
+#include "FIFOScheduler.hpp"
 #include "internal.grpc.pb.h"
 #include "internal.pb.h"
 #include "spdlog/spdlog.h"
@@ -13,7 +14,8 @@ class Master final : public mapreduce::Master::Service
 private:
   std::vector<std::string> _nodes;
   std::shared_ptr<spdlog::logger> _console{spdlog::stderr_color_mt("console")};
-
+  FIFOScheduler _scheduler{};
+  
 public:
   Master();
   grpc::Status RegisterNode(grpc::ServerContext *context, const mapreduce::NewNode *node, mapreduce::Empty *response) override;

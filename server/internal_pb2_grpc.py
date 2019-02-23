@@ -73,6 +73,11 @@ class NodeStub(object):
     Args:
       channel: A grpc.Channel.
     """
+    self.StartTask = channel.unary_unary(
+        '/mapreduce.Node/StartTask',
+        request_serializer=internal__pb2.Task.SerializeToString,
+        response_deserializer=internal__pb2.Empty.FromString,
+        )
     self.JobStart = channel.unary_unary(
         '/mapreduce.Node/JobStart',
         request_serializer=internal__pb2.Job.SerializeToString,
@@ -93,6 +98,13 @@ class NodeStub(object):
 class NodeServicer(object):
   # missing associated documentation comment in .proto file
   pass
+
+  def StartTask(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
 
   def JobStart(self, request, context):
     # missing associated documentation comment in .proto file
@@ -118,6 +130,11 @@ class NodeServicer(object):
 
 def add_NodeServicer_to_server(servicer, server):
   rpc_method_handlers = {
+      'StartTask': grpc.unary_unary_rpc_method_handler(
+          servicer.StartTask,
+          request_deserializer=internal__pb2.Task.FromString,
+          response_serializer=internal__pb2.Empty.SerializeToString,
+      ),
       'JobStart': grpc.unary_unary_rpc_method_handler(
           servicer.JobStart,
           request_deserializer=internal__pb2.Job.FromString,

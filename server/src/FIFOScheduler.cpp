@@ -1,8 +1,38 @@
-#include "FIFOScheduler.hpp"
-
+#include <grpcpp/grpcpp.h>
 #include <iostream>
 #include <thread>
 #include <chrono>
+
+#include "FIFOScheduler.hpp"
+#include "internal.grpc.pb.h"
+#include "internal.pb.h"
+
+FIFOScheduler::FIFOScheduler()
+{
+  
+}
+
+void FIFOScheduler::send_to_node(Task t, SchedulerNode node)
+{
+  _console->info("Sending Task " + std::to_string(t.id) + " to " + node.connstr);
+
+  auto channel{grpc::CreateChannel(node.connstr, grpc::InsecureChannelCredentials())};
+  auto stub{mapreduce::Node::NewStub(channel)};
+
+  grpc::ClientContext context;
+  mapreduce::Empty response;
+  mapreduce::Task t_msg;
+  t_msg.set_id(t.id);
+  t_msg.set_job(t.job);
+  grpc::Status status{stub->StartTask(&context, t_msg, &response)};
+
+  if (status.ok())
+  {
+    _console->info("Task " + std::to_string(t.id) + " delivered");
+  } else {
+    _console->error("Error delivering task " + std::to_string(t.id) + ": " + status.error_message());
+  }
+}
 
 void FIFOScheduler::update()
 {
@@ -27,6 +57,8 @@ void FIFOScheduler::update()
 
 void FIFOScheduler::operator()()
 {
+  _console->info("Started");
+
   while (1)
   {
     update();

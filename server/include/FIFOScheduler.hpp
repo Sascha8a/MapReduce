@@ -5,9 +5,12 @@
 #include <thread>
 #include <mutex>
 
+#include "Task.hpp"
 #include "Scheduler.hpp"
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
-class FIFOScheduler : public Scheduler
+class FIFOScheduler
 {
 private:
   std::queue<Task> _tasks;
@@ -15,11 +18,13 @@ private:
   std::queue<SchedulerNode> _free_nodes;
   std::map<long, SchedulerNode> _full_nodes;
   std::mutex _node_mutex;
+  std::shared_ptr<spdlog::logger> _console{spdlog::stderr_color_mt("FIFOScheduler")};
   void update();
+  void send_to_node(Task, SchedulerNode);
 
 public:
   FIFOScheduler();
-  ~FIFOScheduler();
+  // ~FIFOScheduler() {};
   void operator()();
   void add_node(std::string);
   void add_task(Task);

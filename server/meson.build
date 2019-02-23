@@ -58,7 +58,7 @@ internal_proto_py = gen_py.process('src/protos/internal.proto')
 # subdir('SUBDIR1')
 
 inc_dir = include_directories('include')
-master_src = ['src/master.cpp', 'src/Master.cpp','src/Scheduler.cpp', 'src/FIFOScheduler.cpp', internal_proto, internal_proto_py]
+master_src = ['src/master.cpp', 'src/Master.cpp', 'src/FIFOScheduler.cpp', internal_proto, internal_proto_py]
 node_src = ['src/node.cpp', 'src/Node.cpp', internal_proto, internal_proto_py]
 cli_src = ['src/cli.cpp', internal_proto, internal_proto_py]
 

@@ -46,12 +46,18 @@ message Empty {
 
 }
 
+message Task {
+  int64 id = 1;
+  string job = 2;
+}
+
 service Master {
   rpc RegisterNode (NewNode) returns (Empty);
   rpc JobStart (NewJob) returns (Empty);
 }
 
 service Node {
+  rpc StartTask (Task) returns (Empty);
   rpc JobStart (Job) returns (Empty);
   rpc JobGet (JobRequest) returns (Job);
   rpc JobMapped (MappedJob) returns (Empty);

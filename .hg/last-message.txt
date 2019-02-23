@@ -1,1 +1,1 @@
-Server: Starts with Scheduler for sending tasks to free nodes
+Server: FIFOScheduler v1

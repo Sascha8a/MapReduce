@@ -1,4 +1,5 @@
 #include <sstream>
+#include <thread>
 
 #include "Master.hpp"
 #include "spdlog/spdlog.h"
@@ -9,6 +10,9 @@
 Master::Master()
 {
   _console->set_level(spdlog::level::debug);
+
+  std::thread sch_thread{std::ref(_scheduler)};
+  sch_thread.detach();
 }
 
 std::vector<std::string> chunk_data(std::string data)
@@ -46,7 +50,6 @@ grpc::Status Master::JobStart(grpc::ServerContext *context, const mapreduce::New
   _console->debug("Job data end");
   
   std::vector<std::string> chunks{chunk_data(job->data())};
-  
 
   response->Clear();
   return grpc::Status::OK;
