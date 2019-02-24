@@ -1,1 +1,1 @@
-Server: FIFOScheduler v1
+Server: Handling of new Mapping Tasks at the Node, Code Cleanup in Node

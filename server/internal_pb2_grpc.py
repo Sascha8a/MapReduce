@@ -78,20 +78,10 @@ class NodeStub(object):
         request_serializer=internal__pb2.Task.SerializeToString,
         response_deserializer=internal__pb2.Empty.FromString,
         )
-    self.JobStart = channel.unary_unary(
-        '/mapreduce.Node/JobStart',
-        request_serializer=internal__pb2.Job.SerializeToString,
-        response_deserializer=internal__pb2.Empty.FromString,
-        )
     self.JobGet = channel.unary_unary(
         '/mapreduce.Node/JobGet',
-        request_serializer=internal__pb2.JobRequest.SerializeToString,
+        request_serializer=internal__pb2.Empty.SerializeToString,
         response_deserializer=internal__pb2.Job.FromString,
-        )
-    self.JobMapped = channel.unary_unary(
-        '/mapreduce.Node/JobMapped',
-        request_serializer=internal__pb2.MappedJob.SerializeToString,
-        response_deserializer=internal__pb2.Empty.FromString,
         )
 
 
@@ -106,21 +96,7 @@ class NodeServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def JobStart(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
   def JobGet(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
-  def JobMapped(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -135,20 +111,10 @@ def add_NodeServicer_to_server(servicer, server):
           request_deserializer=internal__pb2.Task.FromString,
           response_serializer=internal__pb2.Empty.SerializeToString,
       ),
-      'JobStart': grpc.unary_unary_rpc_method_handler(
-          servicer.JobStart,
-          request_deserializer=internal__pb2.Job.FromString,
-          response_serializer=internal__pb2.Empty.SerializeToString,
-      ),
       'JobGet': grpc.unary_unary_rpc_method_handler(
           servicer.JobGet,
-          request_deserializer=internal__pb2.JobRequest.FromString,
+          request_deserializer=internal__pb2.Empty.FromString,
           response_serializer=internal__pb2.Job.SerializeToString,
-      ),
-      'JobMapped': grpc.unary_unary_rpc_method_handler(
-          servicer.JobMapped,
-          request_deserializer=internal__pb2.MappedJob.FromString,
-          response_serializer=internal__pb2.Empty.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

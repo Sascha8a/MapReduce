@@ -26,19 +26,21 @@ std::string get_extension_from_type(mapreduce::CodeExt ext)
   }
 }
 
-std::string write_code_file(const mapreduce::Job *job)
+std::string Node::write_code_file(const long id, const mapreduce::CodeExt ext, const std::string code)
 {
-  const std::string filename{"/tmp/" + job->job_id() + get_extension_from_type(job->ext())};
+  const std::string filename{"/tmp/" + std::to_string(id) + get_extension_from_type(ext)};
   std::ofstream stream;
 
   stream.open(filename); // TODO: Configurable folder to save files.
-  stream << job->code();
+  stream << code;
   stream.close();
+
+  _console->debug("Code written to " + filename);
 
   return filename;
 }
 
-void exec(const char *cmd)
+void exec(const char *cmd) //TODO: Function to method
 {
   std::string result;
   std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
@@ -48,80 +50,72 @@ void exec(const char *cmd)
   }
 }
 
-void start_code_file(const mapreduce::Job *job, const std::string code_localtion, const int num_workers)
+void Node::start_code_file(const mapreduce::CodeExt ext, const std::string code_localtion) //TODO: Function to method
 {
-  const auto console{spdlog::get("console")};
-
-  for (int i = 0; i < num_workers; i++)
+  switch (ext)
   {
-    switch (job->ext())
-    {
-    case 0:
-      console->info(job->job_id() + " python worker started");
-      exec(("python3 " + code_localtion).c_str());
-      break;
+  case 0:
+    _console->debug(("python3 " + code_localtion).c_str());
+    exec(("python3 " + code_localtion).c_str());
+    break;
 
-    default:
-      break;
-    }
+  default:
+    _console->debug("Extension not recognised");
+    break;
   }
 }
 
-grpc::Status Node::JobStart(grpc::ServerContext *context, const mapreduce::Job *job, mapreduce::Empty *response)
+grpc::Status Node::JobGet(grpc::ServerContext *context, const mapreduce::Empty *request, mapreduce::Job *response)
 {
-  const auto console{spdlog::get("console")};
-  console->info("New job " + job->job_id() + " received from " + context->peer());
+  _console->debug("Worker requesting job: " + context->peer());
+  response->set_chunk(_chunk);
+  _console->debug("Job sent");
 
-  const std::string code_location{write_code_file(job)};
-  console->info(job->job_id() + " written to disk: " + code_location);
-
-  _workers[job->job_id()] = job->chunks_size();
-  _jobs.insert(std::pair<std::string, mapreduce::Job>(job->job_id(), *job));
-
-  start_code_file(job, code_location, job->chunks_size());
-  response->Clear();
+  request->SerializeAsString(); // Cause -Wunused
 
   return grpc::Status::OK;
 }
 
-grpc::Status Node::JobGet(grpc::ServerContext *context, const mapreduce::JobRequest *request, mapreduce::Job *response)
+grpc::Status Node::StartTask(grpc::ServerContext *context, const mapreduce::Task *task, mapreduce::Empty *response)
 {
-  const auto console{spdlog::get("console")};
-  console->info(request->job_id() + " request received from " + context->peer());
+  mapreduce::MapJob m_job;
 
-  mapreduce::Job job{_jobs[request->job_id()]};
-  const int last_chunk_index{job.chunks_size() - 1};
-  response->set_job_id(job.job_id());
-  response->add_chunks(job.chunks(last_chunk_index));
-  _jobs[request->job_id()].mutable_chunks()->RemoveLast();
+  if (m_job.ParseFromString(task->job()))
+  {
+    _console->info("Map job received from: " + context->peer());
 
-  console->info(request->job_id() + " responded with job to " + context->peer());
+    const std::string code_location{write_code_file(m_job.job_id(), m_job.ext(), m_job.code())};
+    _chunk = m_job.chunk();
+    start_code_file(m_job.ext(), code_location);
 
-  return grpc::Status::OK;
+    response->Clear();
+    return grpc::Status::OK;
+  }
+
+  return grpc::Status::CANCELLED;
 }
 
-grpc::Status Node::JobMapped(grpc::ServerContext *context, const mapreduce::MappedJob *results, mapreduce::Empty *response)
+void Node::register_at_master(std::string master_uri)
 {
-  _workers[results->job_id()] -= 1;
-  const u_int8_t workers_left{_workers[results->job_id()]};
+  _console->debug("Registering at master");
+  _master_uri = master_uri;
 
-  const auto console{spdlog::get("console")};
-  console->info(results->job_id() + " mapped results received from " + context->peer());
-  console->info(results->job_id() + ": " + std::to_string(workers_left) + " workers left");
+  auto channel{grpc::CreateChannel(_master_uri, grpc::InsecureChannelCredentials())};
+  auto stub{mapreduce::Master::NewStub(channel)};
 
-  for (auto &&pair : results->pairs())
+  grpc::ClientContext context;
+  mapreduce::Empty response;
+  mapreduce::NewNode msg;
+  msg.set_connstr("127.0.0.1:50051"); //TODO: Proper URL
+
+  grpc::Status status{stub->RegisterNode(&context, msg, &response)};
+
+  if (status.ok())
   {
-    console->info(pair.key() + " " + std::to_string(pair.value()));
-    _mapresults[results->job_id()].push_back(pair);
+    _console->info("Registered with master");
   }
-
-  if (!workers_left)
+  else
   {
-    _jobs[results->job_id()].clear_chunks();
-    _workers.erase(results->job_id());
-    console->info(results->job_id() + ": " + std::to_string(_mapresults[results->job_id()].size()) + " results");
+    _console->error("Error registering with master: " + status.error_message());
   }
-
-  response->Clear();
-  return grpc::Status::OK;
 }

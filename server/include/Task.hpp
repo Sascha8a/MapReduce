@@ -2,10 +2,8 @@
 
 #include <string>
 
-class Task
+struct Task
 {
-public:
   long id;
   std::string job;
-  Task() { }
 };

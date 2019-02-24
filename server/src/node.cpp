@@ -25,6 +25,7 @@ int main()
 
   std::cout << "Node: " << server_address << std::endl;
 
+  service.register_at_master("127.0.0.1:50050"); //TODO: Config
   server->Wait();
 
   return 0;
