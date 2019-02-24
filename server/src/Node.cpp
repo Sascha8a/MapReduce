@@ -52,11 +52,12 @@ void exec(const char *cmd) //TODO: Function to method
 
 void Node::start_code_file(const mapreduce::CodeExt ext, const std::string code_localtion) //TODO: Function to method
 {
+  std::string cmd = code_localtion + " " + _own_uri;
+
   switch (ext)
   {
   case 0:
-    _console->debug(("python3 " + code_localtion).c_str());
-    exec(("python3 " + code_localtion).c_str());
+    exec(("python3 " + cmd).c_str());
     break;
 
   default:
@@ -69,19 +70,21 @@ grpc::Status Node::JobGet(grpc::ServerContext *context, const mapreduce::Empty *
 {
   _console->debug("Worker requesting job: " + context->peer());
   response->set_chunk(_chunk);
+  response->set_id(_job_id);
   _console->debug("Job sent");
 
-  request->SerializeAsString(); // Cause -Wunused
-
+  request->CheckInitialized();
   return grpc::Status::OK;
 }
 
 grpc::Status Node::StartTask(grpc::ServerContext *context, const mapreduce::Task *task, mapreduce::Empty *response)
 {
+  _task_id = task->id();
   mapreduce::MapJob m_job;
 
   if (m_job.ParseFromString(task->job()))
   {
+    _job_id = m_job.job_id();
     _console->info("Map job received from: " + context->peer());
 
     const std::string code_location{write_code_file(m_job.job_id(), m_job.ext(), m_job.code())};
@@ -93,6 +96,36 @@ grpc::Status Node::StartTask(grpc::ServerContext *context, const mapreduce::Task
   }
 
   return grpc::Status::CANCELLED;
+}
+
+grpc::Status Node::JobMapped(grpc::ServerContext *context, const mapreduce::MappedJob *job, mapreduce::Empty *response)
+{
+  _console->debug("Sending mapped job to master");
+
+  auto channel{grpc::CreateChannel(_master_uri, grpc::InsecureChannelCredentials())};
+  auto stub{mapreduce::Master::NewStub(channel)};
+
+  grpc::ClientContext master_context;
+  mapreduce::Empty master_response;
+  mapreduce::Task msg;
+  msg.set_id(_task_id);
+  msg.set_job(job->SerializeAsString());
+
+  grpc::Status status{stub->TaskDone(&master_context, msg, &master_response)};
+
+  if (status.ok())
+  {
+    _console->info("Sent mapped job to master");
+
+    context->peer();
+    response->SerializeAsString();
+    return grpc::Status::OK;
+  }
+  else
+  {
+    _console->error("Error sending mapped job to master: " + status.error_message());
+    return grpc::Status::CANCELLED;
+  }
 }
 
 void Node::register_at_master(std::string master_uri)

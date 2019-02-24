@@ -47,9 +47,29 @@ grpc::Status Master::JobStart(grpc::ServerContext *context, const mapreduce::New
   _console->debug("Job code\n" + job->code());
   _console->debug("Job code end");
   std::vector<std::string> chunks{chunk_data(job->data())};
-  JobTracker jt{1, &_scheduler, chunks, job->code()};
 
-  _job_trackers.insert(std::pair<long, JobTracker>(1, std::move(jt)));
+  _job_trackers.insert({1, JobTracker(1, &_scheduler, chunks, job->code())});
   response->Clear();
   return grpc::Status::OK;
+}
+
+grpc::Status Master::TaskDone(grpc::ServerContext *context, const mapreduce::Task *task, mapreduce::Empty *response)
+{
+  mapreduce::MappedJob m_job;
+  if (m_job.ParseFromString(task->job()))
+  {
+    _scheduler.task_done(task->id());
+    _console->debug("Job id: " + std::to_string(m_job.id()));
+    _job_trackers.at(m_job.id()).mapped(m_job);
+
+    _console->debug("Mapping job done");
+    return grpc::Status::OK;
+  }
+  else
+  {
+    _console->error("Couldn't parse job in TaskDone");
+    context->peer();
+    response->SerializeAsString();
+    return grpc::Status::CANCELLED;
+  }
 }

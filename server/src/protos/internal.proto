@@ -11,14 +11,29 @@ message NewNode {
   string connstr = 1;
 }
 
+message MapJob {
+  int64 job_id = 1;
+  string code = 2;
+  CodeExt ext = 3;
+  string chunk = 4;
+}
+
+message ReduceJob {
+  int64 job_id = 1;
+  string code = 2;
+  CodeExt ext = 3;
+  string key = 4;
+  repeated int32 values = 5;
+}
+
 message KeyValuePair {
   string key = 1;
   int32 value = 2;
 }
 
 message MappedJob {
-  string job_id = 1;
-  repeated KeyValuePair pairs = 4;
+  int64 id = 1;
+  repeated KeyValuePair pairs = 2;
 }
 
 message NewJob {
@@ -28,14 +43,7 @@ message NewJob {
 
 message Job {
   string chunk = 1;
-}
-
-message JobRequest {
-  string job_id = 1;
-}
-
-message JobMapCount {
-  map<string, int32> key_count = 1;
+  int64 id = 2;
 }
 
 message Empty {
@@ -47,21 +55,16 @@ message Task {
   bytes job = 2;
 }
 
-message MapJob {
-  int64 job_id = 1;
-  string code = 2;
-  CodeExt ext = 3;
-  string chunk = 4;
-}
-
 service Master {
   rpc RegisterNode (NewNode) returns (Empty);
   rpc JobStart (NewJob) returns (Empty);
+  rpc TaskDone (Task) returns (Empty);
 }
 
 service Node {
   rpc StartTask (Task) returns (Empty);
   rpc JobGet (Empty) returns (Job);
+  rpc JobMapped (MappedJob) returns (Empty);
 }
 
 service Worker {

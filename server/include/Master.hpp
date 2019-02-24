@@ -17,9 +17,10 @@ private:
   std::vector<std::string> _nodes;
   std::shared_ptr<spdlog::logger> _console{spdlog::stderr_color_mt("Master")};
   FIFOScheduler _scheduler{};
-  std::map<long, JobTracker> _job_trackers;
+  std::unordered_map<long, JobTracker> _job_trackers{};
 public:
   Master();
   grpc::Status RegisterNode(grpc::ServerContext *context, const mapreduce::NewNode *node, mapreduce::Empty *response) override;
   grpc::Status JobStart(grpc::ServerContext *context, const mapreduce::NewJob *job, mapreduce::Empty *response) override;
+  grpc::Status TaskDone(grpc::ServerContext *context, const mapreduce::Task *task, mapreduce::Empty *response) override;
 };

@@ -1,1 +1,1 @@
-Server: Handling of new Mapping Tasks at the Node, Code Cleanup in Node
+Server: Finishes Map Phase, still no dynamic job IDs
