@@ -15,8 +15,8 @@ def map_func(chunk):
     return results
 
 
-def reduce_func(kvs):
-    return {"a": 5}
+def reduce_func(key, values):
+    return sum(values)
 
 
 worker = Worker(map_func, reduce_func)

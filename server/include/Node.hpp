@@ -13,6 +13,8 @@ class Node final : public mapreduce::Node::Service
 {
 private:
   std::string _chunk;
+  std::string _reduce_key;
+  std::vector<int> _reduce_values;
   long _task_id;
   long _job_id;
   std::string _master_uri;
@@ -26,8 +28,10 @@ public:
   }
   grpc::Status JobGet(grpc::ServerContext *context, const mapreduce::Empty *request, mapreduce::Job *response) override;
   grpc::Status JobMapped(grpc::ServerContext *context, const mapreduce::MappedJob *job, mapreduce::Empty *response) override;
+  grpc::Status JobReduced(grpc::ServerContext *context, const mapreduce::ReducedJob *job, mapreduce::Empty *response) override;
   grpc::Status StartTask(grpc::ServerContext *context, const mapreduce::Task *task, mapreduce::Empty *response) override;
   std::string write_code_file(const long id, const mapreduce::CodeExt ext, const std::string code);
   void start_code_file(const mapreduce::CodeExt ext, const std::string code_localtion);
   void register_at_master(std::string uri);
+  void clean();
 };

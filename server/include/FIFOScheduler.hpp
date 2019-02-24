@@ -26,10 +26,7 @@ private:
 
 public:
   FIFOScheduler();
-  ~FIFOScheduler()
-  {
-    _console->debug("Destructor called");
-  };
+  ~FIFOScheduler(){};
   void operator()();
   void add_node(std::string);
   void add_task(std::string);

@@ -1,1 +1,1 @@
-Server: Finishes Map Phase, still no dynamic job IDs
+Server: Finished reduce phase implementation.

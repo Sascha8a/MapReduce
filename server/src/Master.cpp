@@ -55,21 +55,28 @@ grpc::Status Master::JobStart(grpc::ServerContext *context, const mapreduce::New
 
 grpc::Status Master::TaskDone(grpc::ServerContext *context, const mapreduce::Task *task, mapreduce::Empty *response)
 {
+  mapreduce::ReducedJob r_job;
+  if (r_job.ParseFromString(task->job()) && r_job.result())
+  {
+    _scheduler.task_done(task->id());
+    _job_trackers.at(r_job.id()).reduced(r_job);
+
+    _console->debug("Reduce job done");
+    return grpc::Status::OK;
+  }
+
   mapreduce::MappedJob m_job;
   if (m_job.ParseFromString(task->job()))
   {
     _scheduler.task_done(task->id());
-    _console->debug("Job id: " + std::to_string(m_job.id()));
     _job_trackers.at(m_job.id()).mapped(m_job);
 
     _console->debug("Mapping job done");
     return grpc::Status::OK;
   }
-  else
-  {
-    _console->error("Couldn't parse job in TaskDone");
-    context->peer();
-    response->SerializeAsString();
-    return grpc::Status::CANCELLED;
-  }
+
+  _console->error("Couldn't parse job in TaskDone");
+  context->peer();
+  response->SerializeAsString();
+  return grpc::Status::CANCELLED;
 }

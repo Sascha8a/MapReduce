@@ -21,7 +21,25 @@ void JobTracker::start_map()
 
 void JobTracker::start_reduce()
 {
-  _map_results.
+  for (std::string const &key : _map_keys)
+  {
+    mapreduce::ReduceJob job;
+    job.set_code(_code);
+    job.set_ext(mapreduce::CodeExt::py); //TODO: Dynamic
+    job.set_job_id(_job_id);
+    job.set_key(key);
+
+    for (int const &value : _map_results[key])
+    {
+      job.add_value(value);
+    }
+
+    _scheduler->add_task(job.SerializeAsString());
+  }
+
+  _reduce_tasks_left = _map_keys.size();
+  _map_results.clear();
+  _map_keys.clear();
 }
 
 void JobTracker::mapped(mapreduce::MappedJob m_job)
@@ -30,7 +48,8 @@ void JobTracker::mapped(mapreduce::MappedJob m_job)
 
   for (mapreduce::KeyValuePair const &pair : m_job.pairs())
   {
-    if (!_map_results[pair.key()].size()) {
+    if (!_map_results[pair.key()].size())
+    {
       _map_keys.push_back(pair.key());
     }
     _map_results[pair.key()].push_back(pair.value());
@@ -42,6 +61,22 @@ void JobTracker::mapped(mapreduce::MappedJob m_job)
   {
     _console->info("Map phase done");
     start_reduce();
+  }
+}
+
+void JobTracker::reduced(mapreduce::ReducedJob job)
+{
+  _results.push_back(std::make_pair(job.key(), job.result()));
+  _reduce_tasks_left -= 1;
+
+  if (!_reduce_tasks_left)
+  {
+    _console->info("Reduce phase done");
+    _console->info("Results start");
+    for (auto const& pair : _results) {
+      _console->info(pair.first + " : " + std::to_string(pair.second));
+    }
+    _console->info("Results end");
   }
 }
 

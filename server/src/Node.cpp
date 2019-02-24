@@ -70,8 +70,12 @@ grpc::Status Node::JobGet(grpc::ServerContext *context, const mapreduce::Empty *
 {
   _console->debug("Worker requesting job: " + context->peer());
   response->set_chunk(_chunk);
+  response->set_key(_reduce_key);
   response->set_id(_job_id);
-  _console->debug("Job sent");
+
+  for (int const& value : _reduce_values) {
+    response->add_value(value);
+  }
 
   request->CheckInitialized();
   return grpc::Status::OK;
@@ -80,21 +84,41 @@ grpc::Status Node::JobGet(grpc::ServerContext *context, const mapreduce::Empty *
 grpc::Status Node::StartTask(grpc::ServerContext *context, const mapreduce::Task *task, mapreduce::Empty *response)
 {
   _task_id = task->id();
-  mapreduce::MapJob m_job;
 
-  if (m_job.ParseFromString(task->job()))
-  {
-    _job_id = m_job.job_id();
-    _console->info("Map job received from: " + context->peer());
+  mapreduce::ReduceJob r_job;
+  if (r_job.ParseFromString(task->job()) && r_job.value_size()) {
+    _console->info("Reduce job received from: " + context->peer());
+    _job_id = r_job.job_id();
+    _reduce_key = r_job.key();
+    
+    for (int const& value : r_job.value()) {
+      _reduce_values.push_back(value);
+    }
 
-    const std::string code_location{write_code_file(m_job.job_id(), m_job.ext(), m_job.code())};
-    _chunk = m_job.chunk();
-    start_code_file(m_job.ext(), code_location);
+    const std::string code_location{write_code_file(r_job.job_id(), r_job.ext(), r_job.code())};
+    start_code_file(r_job.ext(), code_location);
 
-    response->Clear();
     return grpc::Status::OK;
   }
 
+
+  mapreduce::MapJob m_job;
+  if (m_job.ParseFromString(task->job()))
+  {
+    _console->info("Map job received from: " + context->peer());
+    _job_id = m_job.job_id();
+    _chunk = m_job.chunk();
+    _console->debug("Chunk: " + _chunk);
+
+
+    const std::string code_location{write_code_file(m_job.job_id(), m_job.ext(), m_job.code())};
+    start_code_file(m_job.ext(), code_location);
+
+    return grpc::Status::OK;
+  }
+
+  _console->error("Couldn't parse job");
+  response->Clear();
   return grpc::Status::CANCELLED;
 }
 
@@ -119,11 +143,45 @@ grpc::Status Node::JobMapped(grpc::ServerContext *context, const mapreduce::Mapp
 
     context->peer();
     response->SerializeAsString();
+
+    clean();
     return grpc::Status::OK;
   }
   else
   {
     _console->error("Error sending mapped job to master: " + status.error_message());
+    return grpc::Status::CANCELLED;
+  }
+}
+
+grpc::Status Node::JobReduced(grpc::ServerContext *context, const mapreduce::ReducedJob *job, mapreduce::Empty *response)
+{
+  _console->debug("Sending reduced job to master");
+
+  auto channel{grpc::CreateChannel(_master_uri, grpc::InsecureChannelCredentials())};
+  auto stub{mapreduce::Master::NewStub(channel)};
+
+  grpc::ClientContext master_context;
+  mapreduce::Empty master_response;
+  mapreduce::Task msg;
+  msg.set_id(_task_id);
+  msg.set_job(job->SerializeAsString());
+
+  grpc::Status status{stub->TaskDone(&master_context, msg, &master_response)};
+
+  if (status.ok())
+  {
+    _console->info("Sent reduced job to master");
+
+    context->peer();
+    response->SerializeAsString();
+
+    clean();
+    return grpc::Status::OK;
+  }
+  else
+  {
+    _console->error("Error sending reduced job to master: " + status.error_message());
     return grpc::Status::CANCELLED;
   }
 }
@@ -151,4 +209,12 @@ void Node::register_at_master(std::string master_uri)
   {
     _console->error("Error registering with master: " + status.error_message());
   }
+}
+
+void Node::clean()
+{
+  _chunk = "";
+  _reduce_key = "";
+  _reduce_values.clear();
+  _reduce_values.shrink_to_fit();
 }

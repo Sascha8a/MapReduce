@@ -105,6 +105,11 @@ class NodeStub(object):
         request_serializer=internal__pb2.MappedJob.SerializeToString,
         response_deserializer=internal__pb2.Empty.FromString,
         )
+    self.JobReduced = channel.unary_unary(
+        '/mapreduce.Node/JobReduced',
+        request_serializer=internal__pb2.ReducedJob.SerializeToString,
+        response_deserializer=internal__pb2.Empty.FromString,
+        )
 
 
 class NodeServicer(object):
@@ -132,6 +137,13 @@ class NodeServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def JobReduced(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_NodeServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -148,6 +160,11 @@ def add_NodeServicer_to_server(servicer, server):
       'JobMapped': grpc.unary_unary_rpc_method_handler(
           servicer.JobMapped,
           request_deserializer=internal__pb2.MappedJob.FromString,
+          response_serializer=internal__pb2.Empty.SerializeToString,
+      ),
+      'JobReduced': grpc.unary_unary_rpc_method_handler(
+          servicer.JobReduced,
+          request_deserializer=internal__pb2.ReducedJob.FromString,
           response_serializer=internal__pb2.Empty.SerializeToString,
       ),
   }

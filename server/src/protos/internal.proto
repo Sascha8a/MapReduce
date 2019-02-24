@@ -23,7 +23,7 @@ message ReduceJob {
   string code = 2;
   CodeExt ext = 3;
   string key = 4;
-  repeated int32 values = 5;
+  repeated int32 value = 5;
 }
 
 message KeyValuePair {
@@ -36,14 +36,22 @@ message MappedJob {
   repeated KeyValuePair pairs = 2;
 }
 
+message ReducedJob {
+  int64 id = 1;
+  string key = 2;
+  int64 result = 3;
+}
+
 message NewJob {
   string code = 1;
   string data = 2;
 }
 
 message Job {
-  string chunk = 1;
-  int64 id = 2;
+  int64 id = 1;
+  string chunk = 2;
+  string key = 3;
+  repeated int32 value = 4;
 }
 
 message Empty {
@@ -65,6 +73,7 @@ service Node {
   rpc StartTask (Task) returns (Empty);
   rpc JobGet (Empty) returns (Job);
   rpc JobMapped (MappedJob) returns (Empty);
+  rpc JobReduced (ReducedJob) returns (Empty);
 }
 
 service Worker {
