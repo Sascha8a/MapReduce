@@ -7,12 +7,12 @@ using namespace std;
 #include "internal.pb.h"
 #include "CLI11.hpp"
 
-std::string get_file()
+std::string get_file(std::string filename)
 {
   std::ifstream fstream;
   std::stringstream sstream;
 
-  fstream.open("impl.py");
+  fstream.open(filename);
   sstream << fstream.rdbuf();
 
   return sstream.str();
@@ -35,9 +35,10 @@ void fn_master_test()
 
   mapreduce::NewJob job;
 
-  const string code{get_file()};
+  const string code{get_file("impl.py")};
   job.set_code(code);
-  job.set_data("a a b b c c\na b c\na");
+  const string data{get_file("shakespeare.txt")};
+  job.set_data(data);
 
   grpc::ClientContext context;
   mapreduce::Empty response;
