@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package mapreduceAPI;
+
+message JobCreationRequest {
+  int64 num_code_chunks = 1;
+  int64 num_data_chunks = 2;
+}
+
+message JobCreationResponse {
+  int32 port = 1;
+  int64 job_id = 2;
+}
+
+message CodeChunk {
+  string code_chunk = 1;
+}
+
+message DataChunk {
+  string data_chunk = 1;
+}
+
+message KeyValuePair {
+  string key = 1;
+  int64 value = 2;
+}
+
+enum JobStatus {
+  init = 0;
+  map_phase = 1;
+  reduce_phase = 2;
+  finished = 3;
+}
+
+message JobStatusRequest {
+  int64 job_id = 1;
+}
+
+message JobStatusResponse {
+  int64 job_id = 1;
+  JobStatus status = 2;
+  repeated KeyValuePair results = 3;
+}
+
+message JobDeletionApproval {
+  int64 job_id = 1;
+  bool approval = 2;
+}

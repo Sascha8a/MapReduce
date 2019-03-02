@@ -1,1 +1,1 @@
-Server: Adds automatic dynamic ports to nodes; Adds dynamic IDs for new tasks and jobs
+Server: Adds protobuf messages for APIServer endpoints

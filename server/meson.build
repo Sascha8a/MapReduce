@@ -6,11 +6,11 @@ project('MapReduce', 'cpp',
 
 thread_dep = dependency('threads')
 
-# # begin asio: https://think-async.com/Asio/
-# add_global_arguments('-I' + get_option('asio_include_dir'), language : 'cpp')
-# add_global_arguments('-DASIO_STANDALONE', language : 'cpp')
-# add_global_arguments('-DASIO_NO_DEPRECATED', language : 'cpp')
-# # end asio
+# begin asio: https://think-async.com/Asio/
+add_global_arguments('-I' + get_option('asio_include_dir'), language : 'cpp')
+add_global_arguments('-DASIO_STANDALONE', language : 'cpp')
+add_global_arguments('-DASIO_NO_DEPRECATED', language : 'cpp')
+# end asio
 
 # clipp: https://github.com/muellan/clipp/
 # add_global_arguments('-I' + get_option('clipp_include_dir'), language : 'cpp')
@@ -50,15 +50,15 @@ gen_py = generator(python3, \
                '--python_out=@SOURCE_DIR@',
                '../src/protos/@PLAINNAME@'])
 
-# change proto file accordingly
 internal_proto = gen.process('src/protos/internal.proto')
 internal_proto_py = gen_py.process('src/protos/internal.proto')
+api_proto = gen.process('src/protos/API.proto')
+
 # end protobuf
 
-# subdir('SUBDIR1')
 
 inc_dir = include_directories('include')
-master_src = ['src/master.cpp', 'src/Master.cpp', 'src/FIFOScheduler.cpp', 'src/JobTracker.cpp', internal_proto, internal_proto_py]
+master_src = ['src/master.cpp', 'src/Master.cpp', 'src/FIFOScheduler.cpp', 'src/JobTracker.cpp', 'src/APIServer.cpp', internal_proto, internal_proto_py, api_proto]
 node_src = ['src/node.cpp', 'src/Node.cpp', internal_proto, internal_proto_py]
 cli_src = ['src/cli.cpp', internal_proto, internal_proto_py]
 

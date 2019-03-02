@@ -9,5 +9,10 @@ abstract: |
 
 ## Grundlegendes
 
+Stuff
 ![Phases of MapReduce][phases]
 
+## Other Stuff
+
+Stuff
+![Communication of MapReduce][sequence]

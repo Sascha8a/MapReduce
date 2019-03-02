@@ -1,0 +1,39 @@
+@startuml SequenceDiagram
+
+par APIServer Thread
+    CLI -> Master: Creates new job
+    Master -> CLI: Responds with port for file upload
+    CLI -> Master: Uploads code and input chunks
+    Master -> CLI: Acknowledges receival of files and closes port
+
+    CLI -> Master: Requests job results
+
+    alt Job finished
+        Master -> CLI: Returns results and awaits approval
+        CLI -> Master: Approves data deletion
+    else Job unfinished
+        Master -> CLI: Returns job status
+    end
+else n Scheduler Threads
+    loop Task in Queue
+        Master -> Node: Sends task
+        Node --> Worker: Starts executable / python 
+        Worker -> Node: Requests job data
+        Node -> Worker: Returns job data
+        Worker -> Node: Sends results of operation
+        Node -> Master: Sends results of operation
+
+        opt Job's Map phase completed
+            Master -> Master: Schedule reduce tasks
+        end
+
+        opt Job's Reduce phase completed
+            Master -> Master: Save results to disk
+        end
+    end
+else Master Thread
+    Node -> Master: Registers and awaits tasks
+    Master -> Node: Acknowledges and adds to scheduler
+end
+
+@enduml
