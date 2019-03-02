@@ -1,1 +1,1 @@
-Server: Finished reduce phase implementation.
+Server: Adds automatic dynamic ports to nodes; Adds dynamic IDs for new tasks and jobs

@@ -17,6 +17,7 @@ private:
   std::vector<std::string> _nodes;
   std::shared_ptr<spdlog::logger> _console{spdlog::stderr_color_mt("Master")};
   FIFOScheduler _scheduler{};
+  long _new_job_id{1};
   std::unordered_map<long, JobTracker> _job_trackers{};
 public:
   Master();

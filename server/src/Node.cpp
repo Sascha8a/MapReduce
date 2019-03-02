@@ -197,7 +197,7 @@ void Node::register_at_master(std::string master_uri)
   grpc::ClientContext context;
   mapreduce::Empty response;
   mapreduce::NewNode msg;
-  msg.set_connstr("127.0.0.1:50051"); //TODO: Proper URL
+  msg.set_connstr(_own_uri); //TODO: Proper URL
 
   grpc::Status status{stub->RegisterNode(&context, msg, &response)};
 
