@@ -1,0 +1,65 @@
+@startuml Master Class Diagram
+
+class Master {
+    +Master()
+    +JobStart(grpc::ServerContext* context, const mapreduce::NewJob* job, mapreduce::Empty* response) : grpc::Status
+    +RegisterNode(grpc::ServerContext* context, const mapreduce::NewNode* node, mapreduce::Empty* response) : grpc::Status
+    +TaskDone(grpc::ServerContext* context, const mapreduce::Task* task, mapreduce::Empty* response) : grpc::Status
+    -_nodes : std::vector<std::string>
+    -_scheduler : FIFOScheduler
+    -_job_trackers : std::unordered_map<long, JobTracker>
+    -_console : std::shared_ptr<spdlog::logger>
+}
+
+class FIFOScheduler {
+    +FIFOScheduler()
+    +~FIFOScheduler()
+    +operator()() : void
+    +add_node(std:: string) : void
+    +add_task(std:: string) : void
+    +task_done(long id) : void
+    -add_task(Task) : void
+    -send_to_node(Task, SchedulerNode) : void
+    -_full_nodes : std::map<long, SchedulerNode>
+    -_free_nodes : std::queue<SchedulerNode>
+    -_tasks : std::queue<Task>
+    -_node_mutex : std::mutex
+}
+
+
+class JobTracker {
+    +JobTracker(long id, FIFOScheduler* scheduler, std::vector<std::string> chunks, std::string code)
+    +~JobTracker()
+    -_scheduler : FIFOScheduler*
+    -_job_id : long
+    -_map_tasks_left : long
+    -_reduce_tasks_left : long
+    -_console : std::shared_ptr<spdlog::logger>
+    -_code : std::string
+    -_map_results : std::unordered_map<std::string, std::vector<long> >
+    -_results : std::vector<std::pair<std::string, long> >
+    -_input : std::vector<std::string>
+    -_map_keys : std::vector<std::string>
+    +mapped(mapreduce:: MappedJob) : void
+    +reduced(mapreduce:: ReducedJob) : void
+    -start_map() : void
+    -start_reduce() : void
+}
+
+class SchedulerNode {
+    +free : bool
+    +connstr : std::string
+}
+
+class Task {
+	+id : long
+	+job : std::string
+}
+
+JobTracker --|> FIFOScheduler
+FIFOScheduler <|-- Master
+JobTracker <|-- Master
+FIFOScheduler o-- SchedulerNode
+FIFOScheduler o-- Task
+
+@enduml

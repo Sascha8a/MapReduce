@@ -1,3 +1,0 @@
-\contentsline {chapter}{\numberline {1}Grundlegendes}{1}
-\contentsline {section}{\numberline {1.1}Phase 1: Map}{1}
-\contentsline {chapter}{\numberline {2}The Second Chapter}{3}

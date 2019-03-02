@@ -1,0 +1,1 @@
+[phases]: images/Phases.png "MapReduce Phases" { width=500px }
