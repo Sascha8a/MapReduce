@@ -60,7 +60,7 @@ api_proto = gen.process('src/protos/API.proto')
 inc_dir = include_directories('include')
 master_src = ['src/master.cpp', 'src/Master.cpp', 'src/FIFOScheduler.cpp', 'src/JobTracker.cpp', 'src/APIServer.cpp', internal_proto, internal_proto_py, api_proto]
 node_src = ['src/node.cpp', 'src/Node.cpp', internal_proto, internal_proto_py]
-cli_src = ['src/cli.cpp', internal_proto, internal_proto_py]
+cli_src = ['src/cli.cpp', internal_proto, internal_proto_py, api_proto]
 
 executable('master',
            sources : master_src,

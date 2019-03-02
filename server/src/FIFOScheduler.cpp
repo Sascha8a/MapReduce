@@ -9,7 +9,7 @@
 
 FIFOScheduler::FIFOScheduler()
 {
-  // _console->set_level(spdlog::level::debug); //TODO: Config
+  _console->set_level(spdlog::level::debug); //TODO: Config
 }
 
 void FIFOScheduler::send_to_node(Task t, SchedulerNode node)

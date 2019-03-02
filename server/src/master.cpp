@@ -5,6 +5,7 @@
 #include <grpcpp/grpcpp.h>
 #include <iostream>
 
+#include "APIServer.hpp"
 #include "internal.grpc.pb.h"
 #include "internal.pb.h"
 #include "Master.hpp"
@@ -22,6 +23,8 @@ int main()
 
   std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
   spdlog::info("Master: " + server_address);
+
+  APIServer api{3000, &service};
 
   server->Wait();
 

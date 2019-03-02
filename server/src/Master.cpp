@@ -9,15 +9,15 @@
 
 Master::Master()
 {
-  // _console->set_level(spdlog::level::debug); //TODO: Config
+  _console->set_level(spdlog::level::debug); //TODO: Config
 
   std::thread sch_thread1{std::ref(_scheduler)};
-  std::thread sch_thread2{std::ref(_scheduler)};
+  // std::thread sch_thread2{std::ref(_scheduler)};
   // std::thread sch_thread3{std::ref(_scheduler)};
   // std::thread sch_thread4{std::ref(_scheduler)};
 
   sch_thread1.detach();
-  sch_thread2.detach();
+  // sch_thread2.detach();
 }
 
 std::vector<std::string> chunk_data(std::string data)
@@ -56,6 +56,16 @@ grpc::Status Master::JobStart(grpc::ServerContext *context, const mapreduce::New
   _new_job_id += 1;
   response->Clear();
   return grpc::Status::OK;
+}
+
+long Master::StartJob(std::vector<std::string> chunks, std::string code)
+{
+  //TODO: Add insert mutex
+  _console->info("Received new job - id:" + std::to_string(_new_job_id));
+  _job_trackers.insert({_new_job_id, JobTracker(_new_job_id, &_scheduler, chunks, code)});
+  _new_job_id += 1;
+
+  return _new_job_id - 1;
 }
 
 grpc::Status Master::TaskDone(grpc::ServerContext *context, const mapreduce::Task *task, mapreduce::Empty *response)

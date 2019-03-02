@@ -1,1 +1,1 @@
-Server: Adds protobuf messages for APIServer endpoints
+Server: Adds API enpoint and CLI implementation for creating new jobs

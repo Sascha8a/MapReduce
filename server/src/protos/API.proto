@@ -9,7 +9,6 @@ message JobCreationRequest {
 
 message JobCreationResponse {
   int32 port = 1;
-  int64 job_id = 2;
 }
 
 message CodeChunk {

@@ -53,13 +53,27 @@ const std::unordered_map<std::type_index, MessageType> type_mapping{
     {typeid(mapreduceAPI::JobStatusResponse), MessageType::JobStatusResponse},
     {typeid(mapreduceAPI::JobDeletionApproval), MessageType::JobDeletionApproval}};
 
+inline int send_proto_no_type(tcp::socket &socket, google::protobuf::Message &message)
+{
+  u_int64_t message_size{message.ByteSizeLong()};
+
+  asio::write(socket, buffer(&message_size, sizeof(message_size)));
+
+  streambuf stream_buffer;
+  ostream output_stream(&stream_buffer);
+  message.SerializeToOstream(&output_stream);
+  asio::write(socket, stream_buffer);
+
+  return SEND_OK;
+}
+
 inline int send_proto(tcp::socket &socket, google::protobuf::Message &message)
 {
   u_int8_t message_type{to_underlying(type_mapping.at(typeid(message)))};
   u_int64_t message_size{message.ByteSizeLong()};
 
   asio::write(socket, buffer(&message_type, sizeof(message_type)));
-  asio::write(socket, buffer(&message_size, sizeof(message_type)));
+  asio::write(socket, buffer(&message_size, sizeof(message_size)));
 
   streambuf stream_buffer;
   ostream output_stream(&stream_buffer);
@@ -74,7 +88,7 @@ inline int receive_proto_message_type(tcp::socket &socket, MessageType &message_
   u_int8_t raw_message_type;
 
   socket.receive(buffer(&raw_message_type, sizeof(raw_message_type)), 0);
-  message_type = static_cast<MessageType>(message_type);
+  message_type = static_cast<MessageType>(raw_message_type);
 
   return SEND_OK;
 }
