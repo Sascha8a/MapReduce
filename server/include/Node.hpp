@@ -22,9 +22,13 @@ private:
   std::shared_ptr<spdlog::logger> _console{spdlog::stderr_color_mt("Node")};
 
 public:
-  Node(std::string node_uri) {
+  Node(std::string node_uri, bool debug)
+  {
     _own_uri = node_uri;
-    _console->set_level(spdlog::level::debug); //TODO: Config
+    if (debug)
+    {
+      _console->set_level(spdlog::level::debug);
+    }
   }
   grpc::Status JobGet(grpc::ServerContext *context, const mapreduce::Empty *request, mapreduce::Job *response) override;
   grpc::Status JobMapped(grpc::ServerContext *context, const mapreduce::MappedJob *job, mapreduce::Empty *response) override;

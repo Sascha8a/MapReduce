@@ -31,7 +31,7 @@ std::string Node::write_code_file(const long id, const mapreduce::CodeExt ext, c
   const std::string filename{"/tmp/" + std::to_string(id) + get_extension_from_type(ext)};
   std::ofstream stream;
 
-  stream.open(filename); // TODO: Configurable folder to save files.
+  stream.open(filename);
   stream << code;
   stream.close();
 
@@ -40,7 +40,7 @@ std::string Node::write_code_file(const long id, const mapreduce::CodeExt ext, c
   return filename;
 }
 
-void exec(const char *cmd) //TODO: Function to method
+void exec(const char *cmd)
 {
   std::string result;
   std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
@@ -50,7 +50,7 @@ void exec(const char *cmd) //TODO: Function to method
   }
 }
 
-void Node::start_code_file(const mapreduce::CodeExt ext, const std::string code_localtion) //TODO: Function to method
+void Node::start_code_file(const mapreduce::CodeExt ext, const std::string code_localtion)
 {
   std::string cmd = code_localtion + " " + _own_uri;
 
@@ -197,7 +197,7 @@ void Node::register_at_master(std::string master_uri)
   grpc::ClientContext context;
   mapreduce::Empty response;
   mapreduce::NewNode msg;
-  msg.set_connstr(_own_uri); //TODO: Proper URL
+  msg.set_connstr(_own_uri);
 
   grpc::Status status{stub->RegisterNode(&context, msg, &response)};
 
@@ -208,6 +208,7 @@ void Node::register_at_master(std::string master_uri)
   else
   {
     _console->error("Error registering with master: " + status.error_message());
+    throw std::runtime_error("Connection to master failed");
   }
 }
 

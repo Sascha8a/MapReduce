@@ -7,8 +7,8 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "internal.grpc.pb.h"
 #include "internal.pb.h"
-
 #include "Node.hpp"
+#include "CLI11.hpp"
 
 #define MIN_PORT 1025
 #define MAX_PORT 32766
@@ -37,21 +37,40 @@ int grpc_pick_unused_port(void)
          (get_random_port_offset() + orig_counter_val) % (MAX_PORT - MIN_PORT + 1);
 }
 
-int main()
+int main(int argc, char** argv)
 {
-  spdlog::stderr_color_mt("console");
-  const std::string port{std::to_string(grpc_pick_unused_port())}; //TODO: COnfig or random
-  Node service{"localhost:" + port};
+  CLI::App app{"'Worker' part of the MapReduce project"};
+
+  std::string port{std::to_string(grpc_pick_unused_port())};
+  app.add_option("-p,--port", port, "The port of this node; Random by default");
+ 
+  std::string masteruri{"127.0.0.1:50050"};
+  app.add_option("-m,--master", masteruri, "Connection string to the master; 127.0.0.1:50050 by default");
+
+  bool debug{false};
+  app.add_flag("-d,--debug", debug, "Enable debug output");
+
+  CLI11_PARSE(app, argc, argv);
+
 
   grpc::ServerBuilder builder;
+  Node service{"localhost:" + port, debug};
   builder.AddListeningPort("0.0.0.0:" + port, grpc::InsecureServerCredentials());
   builder.RegisterService(&service);
-
   std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
-  service.register_at_master("127.0.0.1:50050"); //TODO: Config
-  spdlog::info("Listening on port " + port);
 
-  server->Wait();
+  try
+  {
+    service.register_at_master(masteruri);
+    spdlog::info("Listening on port " + port);
+    server->Wait();
+  }
+  catch(const std::exception& e)
+  {
+    std::cerr << e.what() << '\n';
+
+    return 1;
+  }
 
   return 0;
 }

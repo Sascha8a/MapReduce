@@ -1,1 +1,1 @@
-Server: Adds API enpoint for retrieving job status and results
+Server: Clean up of node; Adds command line options for nodes
