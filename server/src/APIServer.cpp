@@ -31,7 +31,7 @@ int grpc_pick_unused_port(void)
 APIServer::APIServer(short unsigned int port, Master *master)
 {
   _console->set_level(spdlog::level::debug); //TODO: Config
-  
+
   _master = master;
   _thread = std::thread(&APIServer::start_server, this, port);
   _thread.detach();
@@ -69,6 +69,31 @@ void APIServer::start_server(short unsigned int port)
       asio_utils::send_proto(socket, response);
 
       socket.close();
+    }
+    else if (message_type == asio_utils::MessageType::JobStatusRequest)
+    {
+      mapreduceAPI::JobStatusRequest request;
+      asio_utils::receive_proto_message(socket, request);
+      _console->debug("Received JobStatusRequest");
+
+      const long job_id{request.job_id()};
+      const mapreduceAPI::JobStatus status{_master->get_status(job_id)};
+
+      mapreduceAPI::JobStatusResponse response;
+      response.set_status(status);
+      response.set_job_id(job_id);
+
+      if (status == mapreduceAPI::JobStatus::finished)
+      {
+        for (auto &&result : _master->get_results(job_id))
+        {
+          auto pair{response.add_results()};
+          pair->set_key(result.first);
+          pair->set_value(result.second);
+        }
+      }
+      asio_utils::send_proto_no_type(socket, response);
+      _master->clear_results(job_id);
     }
     else
     {

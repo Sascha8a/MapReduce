@@ -3,6 +3,27 @@
 #include "internal.grpc.pb.h"
 #include "internal.pb.h"
 
+mapreduceAPI::JobStatus JobTracker::get_status()
+{
+  if (_map_tasks_left)
+  {
+    return mapreduceAPI::JobStatus::map_phase;
+  }
+  else if (_reduce_tasks_left)
+  {
+    return mapreduceAPI::JobStatus::reduce_phase;
+  }
+  else
+  {
+    return mapreduceAPI::JobStatus::finished;
+  }
+}
+
+std::vector<std::pair<std::string, long>> JobTracker::get_results()
+{
+  return _results;
+}
+
 void JobTracker::start_map()
 {
   for (std::string const &chunk : _input)
@@ -73,7 +94,8 @@ void JobTracker::reduced(mapreduce::ReducedJob job)
   {
     _console->info("Reduce phase done");
     _console->info("Results start");
-    for (auto const& pair : _results) {
+    for (auto const &pair : _results)
+    {
       _console->info(pair.first + " : " + std::to_string(pair.second));
     }
     _console->info("Results end");

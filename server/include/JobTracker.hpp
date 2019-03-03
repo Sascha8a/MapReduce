@@ -6,6 +6,8 @@
 #include "FIFOScheduler.hpp"
 #include "internal.grpc.pb.h"
 #include "internal.pb.h"
+#include "API.grpc.pb.h"
+#include "API.pb.h"
 
 class JobTracker
 {
@@ -24,6 +26,8 @@ private:
   void start_reduce();
 
 public:
+  mapreduceAPI::JobStatus get_status();
+  std::vector<std::pair<std::string, long>>  get_results();
   JobTracker(long id, FIFOScheduler* scheduler, std::vector<std::string> chunks, std::string code);
   ~JobTracker() {};
   void mapped(mapreduce::MappedJob);

@@ -1,1 +1,1 @@
-Server: Adds API enpoint and CLI implementation for creating new jobs
+Server: Adds API enpoint for retrieving job status and results

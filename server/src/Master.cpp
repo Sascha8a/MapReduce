@@ -7,17 +7,26 @@
 #include "internal.grpc.pb.h"
 #include "internal.pb.h"
 
+mapreduceAPI::JobStatus Master::get_status(long job_id)
+{
+  return _job_trackers.at(job_id).get_status();
+}
+
+std::vector<std::pair<std::string, long>> Master::get_results(long job_id) {
+  return _job_trackers.at(job_id).get_results();
+}
+
+void Master::clear_results(long job_id)
+{
+  _job_trackers.erase(job_id);
+}
+
 Master::Master()
 {
-  _console->set_level(spdlog::level::debug); //TODO: Config
+  // _console->set_level(spdlog::level::debug); //TODO: Config
 
   std::thread sch_thread1{std::ref(_scheduler)};
-  // std::thread sch_thread2{std::ref(_scheduler)};
-  // std::thread sch_thread3{std::ref(_scheduler)};
-  // std::thread sch_thread4{std::ref(_scheduler)};
-
   sch_thread1.detach();
-  // sch_thread2.detach();
 }
 
 std::vector<std::string> chunk_data(std::string data)
