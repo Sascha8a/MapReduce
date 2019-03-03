@@ -25,7 +25,7 @@ private:
   void add_task(Task);
 
 public:
-  FIFOScheduler();
+  FIFOScheduler(bool debug);
   ~FIFOScheduler(){};
   void operator()();
   void add_node(std::string);

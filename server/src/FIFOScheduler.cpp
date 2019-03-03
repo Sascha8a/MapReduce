@@ -7,9 +7,12 @@
 #include "internal.grpc.pb.h"
 #include "internal.pb.h"
 
-FIFOScheduler::FIFOScheduler()
+FIFOScheduler::FIFOScheduler(bool debug)
 {
-  // _console->set_level(spdlog::level::debug); //TODO: Config
+  if (debug)
+  {
+    _console->set_level(spdlog::level::debug);
+  }
 }
 
 void FIFOScheduler::send_to_node(Task t, SchedulerNode node)
@@ -29,28 +32,32 @@ void FIFOScheduler::send_to_node(Task t, SchedulerNode node)
   if (status.ok())
   {
     _console->debug("Task " + std::to_string(t.id) + " delivered");
-  } else {
+  }
+  else
+  {
     _console->error("Error delivering task " + std::to_string(t.id) + ": " + status.error_message());
   }
 }
 
 void FIFOScheduler::update()
 {
-  if (!_free_nodes.size()) {
-    _console->debug("All nodes busy");
+  if (!_free_nodes.size())
+  {
     return;
   }
 
-  if (!_tasks.size()) {
-    _console->debug("No tasks to process");
+  if (!_tasks.size())
+  {
     return;
   }
+
+  _console->debug("Processing task");
 
   Task task{_tasks.front()};
   _tasks.pop();
 
   std::lock_guard<std::mutex> lock(_node_mutex);
-  
+
   SchedulerNode node{_free_nodes.front()};
   _free_nodes.pop();
   _full_nodes[task.id] = node;
@@ -78,7 +85,6 @@ void FIFOScheduler::add_node(std::string connstr)
   _node_mutex.lock();
   _free_nodes.push(new_node);
   _node_mutex.unlock();
-
 
   _console->info("Node added: " + connstr);
 }

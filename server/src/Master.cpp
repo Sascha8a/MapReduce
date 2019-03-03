@@ -21,9 +21,11 @@ void Master::clear_results(long job_id)
   _job_trackers.erase(job_id);
 }
 
-Master::Master()
+Master::Master(bool debug) : _debug{debug}, _scheduler{debug}
 {
-  // _console->set_level(spdlog::level::debug); //TODO: Config
+  if (debug) {
+    _console->set_level(spdlog::level::debug);
+  }
 
   std::thread sch_thread1{std::ref(_scheduler)};
   sch_thread1.detach();

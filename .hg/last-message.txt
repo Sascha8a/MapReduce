@@ -1,1 +1,1 @@
-Server: Clean up of node; Adds command line options for nodes
+Server: Adds debug parameter to master cli

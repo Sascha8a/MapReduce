@@ -11,12 +11,26 @@
 #include "Master.hpp"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
+#include "CLI11.hpp"
 
-int main()
+int main(int argc, char** argv)
 {
-  std::string server_address("0.0.0.0:50050"); //TODO: Config file, CLI
+  CLI::App app{"'Worker' part of the MapReduce project"};
 
-  Master service;
+  std::string port{"50050"};
+  app.add_option("-p,--port", port, "The port of this master; 50050 by default");
+
+  std::string api_port{"3000"};
+  app.add_option("-a,--apiport", api_port, "The port the API should run on; 3000 by default");
+
+  bool debug{false};
+  app.add_flag("-d,--debug", debug, "Enable debug output");
+
+  CLI11_PARSE(app, argc, argv);
+
+  std::string server_address("0.0.0.0:" + port);
+
+  Master service{debug};
   grpc::ServerBuilder builder;
   builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
   builder.RegisterService(&service);
@@ -24,7 +38,7 @@ int main()
   std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
   spdlog::info("Master: " + server_address);
 
-  APIServer api{3000, &service};
+  APIServer api{std::atoi(api_port.c_str()), &service, debug};
 
   server->Wait();
 

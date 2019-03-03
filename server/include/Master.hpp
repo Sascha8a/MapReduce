@@ -14,13 +14,14 @@
 class Master final : public mapreduce::Master::Service
 {
 private:
+  bool _debug{false};
   std::vector<std::string> _nodes;
   std::shared_ptr<spdlog::logger> _console{spdlog::stderr_color_mt("Master")};
-  FIFOScheduler _scheduler{};
+  FIFOScheduler _scheduler;
   long _new_job_id{1};
   std::unordered_map<long, JobTracker> _job_trackers{};
 public:
-  Master();
+  Master(bool debug);
   mapreduceAPI::JobStatus get_status(long job_id);
   std::vector<std::pair<std::string, long>> get_results(long job_id);
   void clear_results(long job_id);

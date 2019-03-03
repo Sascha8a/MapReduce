@@ -28,9 +28,11 @@ int grpc_pick_unused_port(void)
          (get_random_port_offset() + orig_counter_val) % (MAX_PORT - MIN_PORT + 1);
 }
 
-APIServer::APIServer(short unsigned int port, Master *master)
+APIServer::APIServer(int port, Master *master, bool debug)
 {
-  _console->set_level(spdlog::level::debug); //TODO: Config
+  if (debug) {
+    _console->set_level(spdlog::level::debug);
+  }
 
   _master = master;
   _thread = std::thread(&APIServer::start_server, this, port);

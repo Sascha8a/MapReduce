@@ -17,6 +17,6 @@ private:
   void start_data_receiver(short unsigned int port, long num_code_chunks, long num_data_chunks);
 
 public:
-  APIServer(short unsigned int port, Master *master);
+  APIServer(int port, Master *master, bool debug);
   ~APIServer(){};
 };
