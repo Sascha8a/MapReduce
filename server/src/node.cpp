@@ -37,13 +37,19 @@ int grpc_pick_unused_port(void)
          (get_random_port_offset() + orig_counter_val) % (MAX_PORT - MIN_PORT + 1);
 }
 
-int main(int argc, char** argv)
+bool file_exists(std::string file_uri)
+{
+  std::ifstream file{file_uri};
+  return file.good();
+}
+
+int main(int argc, char **argv)
 {
   CLI::App app{"'Worker' part of the MapReduce project"};
 
   std::string port{std::to_string(grpc_pick_unused_port())};
   app.add_option("-p,--port", port, "The port of this node; Random by default");
- 
+
   std::string masteruri{"127.0.0.1:50050"};
   app.add_option("-m,--master", masteruri, "Connection string to the master; 127.0.0.1:50050 by default");
 
@@ -52,6 +58,23 @@ int main(int argc, char** argv)
 
   CLI11_PARSE(app, argc, argv);
 
+  if (!file_exists("tmp/Worker.py"))
+  {
+    spdlog::error("Missing tmp/Worker.py");
+    std::exit(1);
+  }
+
+  if (!file_exists("tmp/internal_pb2_grpc.py"))
+  {
+    spdlog::error("Missing tmp/internal_pb2_grpc.py");
+    std::exit(1);
+  }
+
+  if (!file_exists("tmp/internal_pb2.py"))
+  {
+    spdlog::error("Missing tmp/internal_pb2.py");
+    std::exit(1);
+  }
 
   grpc::ServerBuilder builder;
   Node service{"localhost:" + port, debug};
@@ -65,7 +88,7 @@ int main(int argc, char** argv)
     spdlog::info("Listening on port " + port);
     server->Wait();
   }
-  catch(const std::exception& e)
+  catch (const std::exception &e)
   {
     std::cerr << e.what() << '\n';
 

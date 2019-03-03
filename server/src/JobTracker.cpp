@@ -77,6 +77,7 @@ void JobTracker::mapped(mapreduce::MappedJob m_job)
   }
 
   _map_tasks_left -= 1;
+  _console->info("Map tasks left: " + std::to_string(_map_tasks_left));
 
   if (!_map_tasks_left)
   {
@@ -89,16 +90,12 @@ void JobTracker::reduced(mapreduce::ReducedJob job)
 {
   _results.push_back(std::make_pair(job.key(), job.result()));
   _reduce_tasks_left -= 1;
+  _console->info("Reduce tasks left: " + std::to_string(_reduce_tasks_left));
 
   if (!_reduce_tasks_left)
   {
     _console->info("Reduce phase done");
-    _console->info("Results start");
-    for (auto const &pair : _results)
-    {
-      _console->info(pair.first + " : " + std::to_string(pair.second));
-    }
-    _console->info("Results end");
+    _console->info("Job finished");
   }
 }
 

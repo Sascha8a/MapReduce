@@ -1,1 +1,1 @@
-Server: Adds debug parameter to master cli
+Server: Fixes race condition in FIFOScheduler; Adds a proper CLI interface

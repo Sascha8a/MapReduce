@@ -9,7 +9,14 @@
 
 mapreduceAPI::JobStatus Master::get_status(long job_id)
 {
-  return _job_trackers.at(job_id).get_status();
+  try
+  {
+    return _job_trackers.at(job_id).get_status();
+  }
+  catch(const std::exception& e)
+  {
+    return mapreduceAPI::JobStatus::notfound;
+  }
 }
 
 std::vector<std::pair<std::string, long>> Master::get_results(long job_id) {
@@ -84,6 +91,8 @@ grpc::Status Master::TaskDone(grpc::ServerContext *context, const mapreduce::Tas
   mapreduce::ReducedJob r_job;
   if (r_job.ParseFromString(task->job()) && r_job.result())
   {
+    _console->debug("Got Reduce job");
+
     _scheduler.task_done(task->id());
     _job_trackers.at(r_job.id()).reduced(r_job);
 
@@ -94,6 +103,8 @@ grpc::Status Master::TaskDone(grpc::ServerContext *context, const mapreduce::Tas
   mapreduce::MappedJob m_job;
   if (m_job.ParseFromString(task->job()))
   {
+    _console->debug("Got map job");
+
     _scheduler.task_done(task->id());
     _job_trackers.at(m_job.id()).mapped(m_job);
 

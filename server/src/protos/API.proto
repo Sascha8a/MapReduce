@@ -29,6 +29,7 @@ enum JobStatus {
   map_phase = 1;
   reduce_phase = 2;
   finished = 3;
+  notfound = 4;
 }
 
 message JobStatusRequest {

@@ -28,7 +28,7 @@ std::string get_extension_from_type(mapreduce::CodeExt ext)
 
 std::string Node::write_code_file(const long id, const mapreduce::CodeExt ext, const std::string code)
 {
-  const std::string filename{"/tmp/" + std::to_string(id) + get_extension_from_type(ext)};
+  const std::string filename{"tmp/" + std::to_string(id) + get_extension_from_type(ext)};
   std::ofstream stream;
 
   stream.open(filename);
