@@ -15,7 +15,7 @@
 
 int main(int argc, char** argv)
 {
-  CLI::App app{"'Worker' part of the MapReduce project"};
+  CLI::App app{"Controller for the MapReduce project"};
 
   std::string port{"50050"};
   app.add_option("-p,--port", port, "The port of this master; 50050 by default");

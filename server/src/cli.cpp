@@ -249,7 +249,7 @@ int main(int argc, char *argv[])
   std::string config_url;
   start->add_option("-c,--config", config_url, "Location of the config file")->required()->check(CLI::ExistingFile);
 
-  CLI::App *status = map_reduce_cli.add_subcommand("status", "Start a new job");
+  CLI::App *status = map_reduce_cli.add_subcommand("status", "Status of a job");
   long job_id;
   status->add_option("--id", job_id, "Job ID")->required();
   std::string master_ip{"127.0.0.1"};

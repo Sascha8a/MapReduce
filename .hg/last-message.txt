@@ -1,1 +1,1 @@
-Docs: Starts and finishes (hopefully) documentation
+Server: Fixes CLI misspelling in node, cli, master
