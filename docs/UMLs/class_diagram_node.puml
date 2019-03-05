@@ -1,21 +1,22 @@
 @startuml Master Class Diagram
 
 class Node {
-	+Node(std::string node_uri)
-	+StartTask(grpc::ServerContext* context, const mapreduce::Task* task, mapreduce::Empty* response) : grpc::Status
+	+Node(std::string node_uri, bool debug)
 	+JobGet(grpc::ServerContext* context, const mapreduce::Empty* request, mapreduce::Job* response) : grpc::Status
 	+JobMapped(grpc::ServerContext* context, const mapreduce::MappedJob* job, mapreduce::Empty* response) : grpc::Status
 	+JobReduced(grpc::ServerContext* context, const mapreduce::ReducedJob* job, mapreduce::Empty* response) : grpc::Status
-	+register_at_master(std::string uri) : void
-	+write_code_file(const long id, const mapreduce::CodeExt ext, const std::string code) : std::string
-	-start_code_file(const mapreduce::CodeExt ext, const std::string code_localtion) : void
-	+clean() : void
+	+StartTask(grpc::ServerContext* context, const mapreduce::Task* task, mapreduce::Empty* response) : grpc::Status
 	-_job_id : long
 	-_task_id : long
 	-_chunk : std::string
 	-_master_uri : std::string
 	-_own_uri : std::string
 	-_reduce_key : std::string
+	+write_code_file(const long id, const mapreduce::CodeExt ext, const std::string code) : std::string
 	-_reduce_values : std::vector<int>
+	+clean() : void
+	+register_at_master(std::string uri) : void
+	+start_code_file(const mapreduce::CodeExt ext, const std::string code_localtion) : void
 }
+
 @enduml

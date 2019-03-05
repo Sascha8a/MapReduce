@@ -1,31 +1,30 @@
-@startuml Master Class Diagram
+@startuml class_diagram_master
 
-class Master {
-    +Master()
-    +JobStart(grpc::ServerContext* context, const mapreduce::NewJob* job, mapreduce::Empty* response) : grpc::Status
-    +RegisterNode(grpc::ServerContext* context, const mapreduce::NewNode* node, mapreduce::Empty* response) : grpc::Status
-    +TaskDone(grpc::ServerContext* context, const mapreduce::Task* task, mapreduce::Empty* response) : grpc::Status
-    -_nodes : std::vector<std::string>
-    -_scheduler : FIFOScheduler
-    -_job_trackers : std::unordered_map<long, JobTracker>
-    -_console : std::shared_ptr<spdlog::logger>
+class APIServer {
+    +APIServer(int port, Master* master, bool debug)
+    +~APIServer()
+    -_master : Master*
+    -_thread : std::thread
+    -start_data_receiver(short unsigned int port, long num_code_chunks, long num_data_chunks) : void
+    -start_server(short unsigned int port) : void
 }
 
 class FIFOScheduler {
-    +FIFOScheduler()
+    +FIFOScheduler(bool debug)
     +~FIFOScheduler()
-    +operator()() : void
-    +add_node(std:: string) : void
-    +add_task(std:: string) : void
-    +task_done(long id) : void
-    -add_task(Task) : void
-    -send_to_node(Task, SchedulerNode) : void
     -_full_nodes : std::map<long, SchedulerNode>
+    -_node_mutex : std::mutex
     -_free_nodes : std::queue<SchedulerNode>
     -_tasks : std::queue<Task>
-    -_node_mutex : std::mutex
+    -_loop_thread : std::thread
+    +add_node(std:: string) : void
+    +add_task(std:: string) : void
+    -add_task(Task) : void
+    +operator()() : void
+    -send_to_node(Task, SchedulerNode) : void
+    +task_done(long id) : void
+    -update() : void
 }
-
 
 class JobTracker {
     +JobTracker(long id, FIFOScheduler* scheduler, std::vector<std::string> chunks, std::string code)
@@ -34,9 +33,11 @@ class JobTracker {
     -_job_id : long
     -_map_tasks_left : long
     -_reduce_tasks_left : long
+    +get_status() : mapreduceAPI::JobStatus
     -_console : std::shared_ptr<spdlog::logger>
     -_code : std::string
     -_map_results : std::unordered_map<std::string, std::vector<long> >
+    +get_results() : std::vector<std::pair<std::string , long> >
     -_results : std::vector<std::pair<std::string, long> >
     -_input : std::vector<std::string>
     -_map_keys : std::vector<std::string>
@@ -46,20 +47,35 @@ class JobTracker {
     -start_reduce() : void
 }
 
+class Master {
+    +Master(bool debug)
+    -_scheduler : FIFOScheduler
+    -_nodes : std::vector<std::string>
+    -_job_trackers : std::unordered_map<long, JobTracker>
+    +JobStart(grpc::ServerContext* context, const mapreduce::NewJob* job, mapreduce::Empty* response) : grpc::Status
+    +RegisterNode(grpc::ServerContext* context, const mapreduce::NewNode* node, mapreduce::Empty* response) : grpc::Status
+    +TaskDone(grpc::ServerContext* context, const mapreduce::Task* task, mapreduce::Empty* response) : grpc::Status
+    +StartJob(std::vector<std::string> chunks, std::string code) : long
+    +get_status(long job_id) : mapreduceAPI::JobStatus
+    +get_results(long job_id) : std::vector<std::pair<std::string , long> >
+    +clear_results(long job_id) : void
+}
+
 class SchedulerNode {
     +free : bool
     +connstr : std::string
 }
 
 class Task {
-	+id : long
-	+job : std::string
+    +id : long
+    +job : std::string
 }
 
-JobTracker --|> FIFOScheduler
-FIFOScheduler <|-- Master
-JobTracker <|-- Master
-FIFOScheduler o-- SchedulerNode
-FIFOScheduler o-- Task
+Master *-- JobTracker
+APIServer --> Master
+JobTracker --> FIFOScheduler
+FIFOScheduler *-- SchedulerNode
+FIFOScheduler *-- Task
+Master *-- FIFOScheduler
 
 @enduml

@@ -4,13 +4,10 @@ K := $(foreach exec,$(EXECUTABLES),\
 FILENAME = ausarbeitung
 FILES = $(FILENAME).md images.md
 
-all: check umls tex pdf
-
-tex: umls
-	pandoc -s -o $(FILENAME).tex $(FILES)
+all: check umls pdf
 
 pdf: umls
-	pandoc -s -o $(FILENAME).pdf $(FILES)
+	pandoc --toc -s -o $(FILENAME).pdf $(FILES)
 
 check:
 	mkdir -p compiled_umls
