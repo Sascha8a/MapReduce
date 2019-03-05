@@ -1,1 +1,1 @@
-Server: Fixes race condition in FIFOScheduler; Adds a proper CLI interface
+Docs: Starts and finishes (hopefully) documentation

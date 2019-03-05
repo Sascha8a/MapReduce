@@ -1,4 +1,4 @@
-@startuml SequenceDiagram
+@startuml sequence_diagram
 
 par APIServer Thread
     CLI -> Master: Creates new job

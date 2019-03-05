@@ -1,4 +1,4 @@
-@startuml Master Class Diagram
+@startuml class_diagram_node
 
 class Node {
 	+Node(std::string node_uri, bool debug)

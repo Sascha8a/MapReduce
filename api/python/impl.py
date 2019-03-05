@@ -1,8 +1,3 @@
-import grpc
-import internal_pb2
-import internal_pb2_grpc
-import json
-import sys
 import Worker
 
 def map_func(chunk):
