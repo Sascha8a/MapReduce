@@ -13,13 +13,14 @@ mapreduceAPI::JobStatus Master::get_status(long job_id)
   {
     return _job_trackers.at(job_id).get_status();
   }
-  catch(const std::exception& e)
+  catch (const std::exception &e)
   {
     return mapreduceAPI::JobStatus::notfound;
   }
 }
 
-std::vector<std::pair<std::string, long>> Master::get_results(long job_id) {
+std::vector<std::pair<std::string, long>> Master::get_results(long job_id)
+{
   return _job_trackers.at(job_id).get_results();
 }
 
@@ -28,14 +29,18 @@ void Master::clear_results(long job_id)
   _job_trackers.erase(job_id);
 }
 
-Master::Master(bool debug) : _debug{debug}, _scheduler{debug}
+Master::Master(bool debug, int num_schedulers) : _debug{debug}, _scheduler{debug}
 {
-  if (debug) {
+  if (debug)
+  {
     _console->set_level(spdlog::level::debug);
   }
 
-  std::thread sch_thread1{std::ref(_scheduler)};
-  sch_thread1.detach();
+  for(int i = 0; i < num_schedulers; i++)
+  {
+    std::thread sch_thread{std::ref(_scheduler)};
+    sch_thread.detach();
+  }
 }
 
 std::vector<std::string> chunk_data(std::string data)

@@ -1,4 +1,4 @@
-import Worker
+from MapReduce import Worker
 
 def map_func(chunk):
     results = []
@@ -8,9 +8,7 @@ def map_func(chunk):
 
     return results
 
-
 def reduce_func(key, values):
     return sum(values)
 
-
-worker = Worker(map_func, reduce_func)
+Worker(map_func, reduce_func)

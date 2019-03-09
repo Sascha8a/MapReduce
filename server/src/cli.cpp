@@ -220,6 +220,10 @@ void get_status(long job_id, std::string master_ip, std::string master_port)
   {
     spdlog::info("Status: Job in reduce phase");
   }
+  else if (response.status() == mapreduceAPI::JobStatus::notfound)
+  {
+    spdlog::error("Job not found");
+  }
   else
   {
     spdlog::info("Status: Job finished");

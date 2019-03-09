@@ -10,8 +10,8 @@
 #include "Node.hpp"
 #include "CLI11.hpp"
 
-#define MIN_PORT 1025
-#define MAX_PORT 32766
+#define MIN_PORT 3100
+#define MAX_PORT 3200
 static gpr_atm s_pick_counter = 0;
 
 /**
@@ -58,9 +58,9 @@ int main(int argc, char **argv)
 
   CLI11_PARSE(app, argc, argv);
 
-  if (!file_exists("tmp/Worker.py"))
+  if (!file_exists("tmp/MapReduce.py"))
   {
-    spdlog::error("Missing tmp/Worker.py");
+    spdlog::error("Missing tmp/MapReduce.py");
     std::exit(1);
   }
 

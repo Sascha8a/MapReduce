@@ -5,6 +5,7 @@
 #include <thread>
 #include <mutex>
 
+#include "concurrentqueue.hpp"
 #include "Task.hpp"
 #include "Scheduler.hpp"
 #include "spdlog/spdlog.h"
@@ -19,12 +20,11 @@
 class FIFOScheduler
 {
 private:
-  std::queue<Task> _tasks;
+  moodycamel::ConcurrentQueue<Task> _tasks;
   long _new_task_id{0};
   std::thread _loop_thread;
-  std::queue<SchedulerNode> _free_nodes;
+  moodycamel::ConcurrentQueue<SchedulerNode> _free_nodes;
   std::map<long, SchedulerNode> _full_nodes;
-  std::mutex _node_mutex;
   std::shared_ptr<spdlog::logger> _console{spdlog::stderr_color_mt("FIFOScheduler")};
 
   /**

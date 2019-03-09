@@ -93,13 +93,16 @@ void APIServer::start_server(short unsigned int port)
           pair->set_key(result.first);
           pair->set_value(result.second);
         }
+
+        _master->clear_results(job_id);
       }
+
       asio_utils::send_proto_no_type(socket, response);
-      _master->clear_results(job_id);
+      socket.close();
     }
     else
     {
-      _console->error("Received unrecognised message: ");
+      _console->error("Received unrecognised message!");
     }
   }
 }

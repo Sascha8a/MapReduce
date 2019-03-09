@@ -26,11 +26,15 @@ int main(int argc, char** argv)
   bool debug{false};
   app.add_flag("-d,--debug", debug, "Enable debug output");
 
+  int num_schedulers{2};
+  app.add_option("-s,--schedulers", num_schedulers, "Number of scheduler threads");
+
+
   CLI11_PARSE(app, argc, argv);
 
   std::string server_address("0.0.0.0:" + port);
 
-  Master service{debug};
+  Master service{debug, num_schedulers};
   grpc::ServerBuilder builder;
   builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
   builder.RegisterService(&service);

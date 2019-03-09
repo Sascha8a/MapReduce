@@ -41,13 +41,13 @@ void FIFOScheduler::send_to_node(Task t, SchedulerNode node)
 
 void FIFOScheduler::update()
 {
-  if (!_free_nodes.size())
+  if (!_free_nodes.size_approx())
   {
     // _console->debug("No free nodes");
     return;
   }
 
-  if (!_tasks.size())
+  if (!_tasks.size_approx())
   {
     // _console->debug("No tasks");
     return;
@@ -55,18 +55,24 @@ void FIFOScheduler::update()
 
   _console->debug("Processing task");
 
-  Task task{_tasks.front()};
-  _tasks.pop();
+  Task task;
+  bool found_task{_tasks.try_dequeue(task)};
 
-  _node_mutex.lock();
+  if (!found_task)
+  {
+    return;
+  }
 
-  SchedulerNode node{_free_nodes.front()};
-  _free_nodes.pop();
+  SchedulerNode node;
+  bool found_node{_free_nodes.try_dequeue(node)};
+
+  if (!found_node)
+  {
+    _tasks.enqueue(task);
+    return;
+  }
+
   _full_nodes[task.id] = node;
-
-  _node_mutex.unlock();
-
-
   send_to_node(task, node);
 }
 
@@ -86,16 +92,14 @@ void FIFOScheduler::add_node(std::string connstr)
   SchedulerNode new_node;
   new_node.connstr = connstr;
   new_node.free = true;
-
-  std::lock_guard<std::mutex> lock(_node_mutex);
-  _free_nodes.push(new_node);
+  _free_nodes.enqueue(new_node);
 
   _console->info("Node added: " + connstr);
 }
 
 void FIFOScheduler::add_task(Task task)
 {
-  _tasks.push(task);
+  _tasks.enqueue(task);
   _console->debug("New task added: " + std::to_string(task.id));
 }
 
@@ -111,11 +115,9 @@ void FIFOScheduler::add_task(std::string job)
 
 void FIFOScheduler::task_done(long id)
 {
-  std::lock_guard<std::mutex> lock(_node_mutex);
-
   auto node{_full_nodes[id]};
   _full_nodes.erase(id);
-  _free_nodes.push(node);
+  _free_nodes.enqueue(node);
 
   _console->debug("Task done: " + std::to_string(id));
 }

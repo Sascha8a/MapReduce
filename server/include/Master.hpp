@@ -25,7 +25,7 @@ private:
   long _new_job_id{1};
   std::unordered_map<long, JobTracker> _job_trackers{};
 public:
-  Master(bool debug);
+  Master(bool debug, int num_schedulers);
 
   /**
    * @brief Returns the current status of a particular job

@@ -1,1 +1,1 @@
-Server: Adds doxygen-compatible documentation in header files
+Server: Fixes typo in comment
