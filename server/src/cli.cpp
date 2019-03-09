@@ -70,6 +70,54 @@ std::vector<std::string> input_linewise(std::string input_file_uri)
   return results;
 }
 
+std::vector<std::string> input_linewise(std::string input_file_uri, int chunk_size=1)
+{
+  std::vector<std::string> results;
+  std::ifstream fstream;
+  std::string line;
+  std::string intermediate_result{""};
+  int counter{0};
+
+  try
+  {
+    fstream.open(input_file_uri);
+  }
+  catch (const std::exception &e)
+  {
+    spdlog::error("Error opening input file: {}", e.what());
+    std::exit(0);
+  }
+
+  spdlog::info("Reading {}...", input_file_uri);
+  while (getline(fstream, line))
+  {
+    strip_unicode(line);
+    intermediate_result += (line + " \n");
+    counter += 1;
+
+    if (counter == chunk_size) {
+      results.push_back(intermediate_result);
+
+      intermediate_result = "";
+      counter = 0;
+    }
+  }
+
+  results.push_back(intermediate_result);
+
+  if (results.size())
+  {
+    spdlog::info("Got {} lines", results.size());
+  }
+  else
+  {
+    spdlog::error("Found 0 lines. Does the file exist?");
+    std::exit(0);
+  }
+
+  return results;
+}
+
 long upload_data(std::vector<std::string> &code, std::vector<std::string> &data, std::string ip, std::string port)
 {
   asio::io_context io_context;
@@ -170,8 +218,13 @@ void start_job(std::string config_url)
 
   if (config["split"] == "line")
   {
-    input_chunks = input_linewise(config["input"]);
-    code_chunks = input_linewise(config["code"]);
+    input_chunks = input_linewise(config["input"], 1);
+    code_chunks = input_linewise(config["code"], 1);
+  }
+  else if (config["split"] == "line64")
+  {
+    input_chunks = input_linewise(config["input"], 1024);
+    code_chunks = input_linewise(config["code"], 1024);
   }
   else
   {

@@ -1,1 +1,1 @@
-Server: Fixes typo in comment
+Server: Fixes a race condition on the Node, which resulted in a segfault

@@ -28,7 +28,8 @@ std::string get_extension_from_type(mapreduce::CodeExt ext)
 
 std::string Node::write_code_file(const long id, const mapreduce::CodeExt ext, const std::string code)
 {
-  const std::string filename{"tmp/" + std::to_string(id) + get_extension_from_type(ext)};
+  std::to_string(id);
+  const std::string filename{"tmp/" + _own_uri + get_extension_from_type(ext)};
   std::ofstream stream;
 
   stream.open(filename);
@@ -42,65 +43,80 @@ std::string Node::write_code_file(const long id, const mapreduce::CodeExt ext, c
 
 void exec(const char *cmd)
 {
-  std::string result;
-  std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
-  if (!pipe)
-  {
-    throw std::runtime_error("popen() failed!");
-  }
+  system(cmd);
 }
 
 void Node::start_code_file(const mapreduce::CodeExt ext, const std::string code_localtion)
 {
+  _console->debug("Starting " + code_localtion);
+
   std::string cmd = code_localtion + " " + _own_uri;
 
   switch (ext)
   {
   case 0:
-    exec(("python3 " + cmd).c_str());
+    exec(("python3 " + cmd + " &").c_str());
     break;
 
   default:
     _console->debug("Extension not recognised");
     break;
   }
+
+  _console->debug("Done");
 }
 
 grpc::Status Node::JobGet(grpc::ServerContext *context, const mapreduce::Empty *request, mapreduce::Job *response)
 {
-  _console->debug("Worker requesting job: " + context->peer());
+  _console->debug("Worker " + context->peer() + " requesting job. Waiting...");
+  std::lock_guard<std::mutex> lock(_node_mutex);
+
+  _console->debug("Done waiting");
   response->set_chunk(_chunk);
   response->set_key(_reduce_key);
+  _console->debug("Set _reduce_key: " + _reduce_key);
   response->set_id(_job_id);
+  _console->debug("Set _job_id: " + std::to_string(_job_id));
 
-  for (int const& value : _reduce_values) {
+  for (int const &value : _reduce_values)
+  {
     response->add_value(value);
+  // _console->debug("Added reduce value: " + std::to_string(value));
   }
 
-  request->CheckInitialized();
+  std::string empty;
+  request->SerializeToString(&empty);
+
+  _console->debug("Sent job to worker");
   return grpc::Status::OK;
 }
 
 grpc::Status Node::StartTask(grpc::ServerContext *context, const mapreduce::Task *task, mapreduce::Empty *response)
 {
+  _console->info("Reduce job received from: " + context->peer() + " Waiting....");
+  std::lock_guard<std::mutex> lock(_node_mutex);
+
   _task_id = task->id();
 
   mapreduce::ReduceJob r_job;
-  if (r_job.ParseFromString(task->job()) && r_job.value_size()) {
+  if (r_job.ParseFromString(task->job()) && r_job.value_size())
+  {
     _console->info("Reduce job received from: " + context->peer());
     _job_id = r_job.job_id();
     _reduce_key = r_job.key();
-    
-    for (int const& value : r_job.value()) {
+
+    for (int const &value : r_job.value())
+    {
       _reduce_values.push_back(value);
     }
 
     const std::string code_location{write_code_file(r_job.job_id(), r_job.ext(), r_job.code())};
     start_code_file(r_job.ext(), code_location);
 
+    _console->debug("Started worker");
+
     return grpc::Status::OK;
   }
-
 
   mapreduce::MapJob m_job;
   if (m_job.ParseFromString(task->job()))
@@ -108,11 +124,11 @@ grpc::Status Node::StartTask(grpc::ServerContext *context, const mapreduce::Task
     _console->info("Map job received from: " + context->peer());
     _job_id = m_job.job_id();
     _chunk = m_job.chunk();
-    _console->debug("Chunk: " + _chunk);
-
 
     const std::string code_location{write_code_file(m_job.job_id(), m_job.ext(), m_job.code())};
     start_code_file(m_job.ext(), code_location);
+
+    _console->debug("Started worker");
 
     return grpc::Status::OK;
   }
@@ -124,6 +140,9 @@ grpc::Status Node::StartTask(grpc::ServerContext *context, const mapreduce::Task
 
 grpc::Status Node::JobMapped(grpc::ServerContext *context, const mapreduce::MappedJob *job, mapreduce::Empty *response)
 {
+  _console->debug("Received mapped job from worker. Waiting....");
+  std::lock_guard<std::mutex> lock(_node_mutex);
+
   _console->debug("Sending mapped job to master");
 
   auto channel{grpc::CreateChannel(_master_uri, grpc::InsecureChannelCredentials())};
@@ -135,27 +154,22 @@ grpc::Status Node::JobMapped(grpc::ServerContext *context, const mapreduce::Mapp
   msg.set_id(_task_id);
   msg.set_job(job->SerializeAsString());
 
+  clean();
+
   grpc::Status status{stub->TaskDone(&master_context, msg, &master_response)};
+  _console->info("Sent mapped job to master");
 
-  if (status.ok())
-  {
-    _console->info("Sent mapped job to master");
+  context->peer();
+  response->SerializeAsString();
 
-    context->peer();
-    response->SerializeAsString();
-
-    clean();
-    return grpc::Status::OK;
-  }
-  else
-  {
-    _console->error("Error sending mapped job to master: " + status.error_message());
-    return grpc::Status::CANCELLED;
-  }
+  return grpc::Status::OK;
 }
 
 grpc::Status Node::JobReduced(grpc::ServerContext *context, const mapreduce::ReducedJob *job, mapreduce::Empty *response)
 {
+  _console->debug("Received reduced job from worker. Waiting....");
+  std::lock_guard<std::mutex> lock(_node_mutex);
+
   _console->debug("Sending reduced job to master");
 
   auto channel{grpc::CreateChannel(_master_uri, grpc::InsecureChannelCredentials())};
@@ -167,27 +181,21 @@ grpc::Status Node::JobReduced(grpc::ServerContext *context, const mapreduce::Red
   msg.set_id(_task_id);
   msg.set_job(job->SerializeAsString());
 
+  clean();
+
   grpc::Status status{stub->TaskDone(&master_context, msg, &master_response)};
+  _console->info("Sent reduced job to master");
 
-  if (status.ok())
-  {
-    _console->info("Sent reduced job to master");
+  context->peer();
+  response->SerializeAsString();
 
-    context->peer();
-    response->SerializeAsString();
-
-    clean();
-    return grpc::Status::OK;
-  }
-  else
-  {
-    _console->error("Error sending reduced job to master: " + status.error_message());
-    return grpc::Status::CANCELLED;
-  }
+  return grpc::Status::OK;
 }
 
 void Node::register_at_master(std::string master_uri)
 {
+  std::lock_guard<std::mutex> lock(_node_mutex);
+
   _console->debug("Registering at master");
   _master_uri = master_uri;
 

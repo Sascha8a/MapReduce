@@ -63,6 +63,11 @@ void JobTracker::start_reduce()
   _map_keys.clear();
 }
 
+bool JobTracker::map_phase_done()
+{
+  return _map_tasks_left <= 0;
+}
+
 void JobTracker::mapped(mapreduce::MappedJob m_job)
 {
   _console->debug("Pushing map result");

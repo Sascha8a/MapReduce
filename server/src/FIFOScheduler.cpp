@@ -17,26 +17,30 @@ FIFOScheduler::FIFOScheduler(bool debug)
 
 void FIFOScheduler::send_to_node(Task t, SchedulerNode node)
 {
-  _console->debug("Sending Task " + std::to_string(t.id) + " to " + node.connstr);
+  std::thread thread{[t, node](){
+    // _console->debug("Sending Task " + std::to_string(t.id) + " to " + node.connstr);
 
-  auto channel{grpc::CreateChannel(node.connstr, grpc::InsecureChannelCredentials())};
-  auto stub{mapreduce::Node::NewStub(channel)};
+    auto channel{grpc::CreateChannel(node.connstr, grpc::InsecureChannelCredentials())};
+    auto stub{mapreduce::Node::NewStub(channel)};
 
-  grpc::ClientContext context;
-  mapreduce::Empty response;
-  mapreduce::Task t_msg;
-  t_msg.set_id(t.id);
-  t_msg.set_job(t.job);
-  grpc::Status status{stub->StartTask(&context, t_msg, &response)};
+    grpc::ClientContext context;
+    mapreduce::Empty response;
+    mapreduce::Task t_msg;
+    t_msg.set_id(t.id);
+    t_msg.set_job(t.job);
+    grpc::Status status{stub->StartTask(&context, t_msg, &response)};
 
-  if (status.ok())
-  {
-    _console->debug("Task " + std::to_string(t.id) + " delivered");
-  }
-  else
-  {
-    _console->error("Error delivering task " + std::to_string(t.id) + ": " + status.error_message());
-  }
+    if (status.ok())
+    {
+      // _console->debug("Task " + std::to_string(t.id) + " delivered");
+    }
+    else
+    {
+      // _console->error("Error delivering task " + std::to_string(t.id) + ": " + status.error_message());
+    }
+  }};
+
+  thread.detach();
 }
 
 void FIFOScheduler::update()

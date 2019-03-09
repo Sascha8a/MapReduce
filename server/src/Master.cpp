@@ -79,6 +79,18 @@ long Master::StartJob(std::vector<std::string> chunks, std::string code)
 
 grpc::Status Master::TaskDone(grpc::ServerContext *context, const mapreduce::Task *task, mapreduce::Empty *response)
 {
+  mapreduce::MappedJob m_job;
+  if (m_job.ParseFromString(task->job()) && !_job_trackers.at(m_job.id()).map_phase_done())
+  {
+    _console->debug("Got map job");
+
+    _scheduler.task_done(task->id());
+    _job_trackers.at(m_job.id()).mapped(m_job);
+
+    _console->debug("Mapping job done");
+    return grpc::Status::OK;
+  }
+
   mapreduce::ReducedJob r_job;
   if (r_job.ParseFromString(task->job()) && r_job.result())
   {
@@ -88,18 +100,6 @@ grpc::Status Master::TaskDone(grpc::ServerContext *context, const mapreduce::Tas
     _job_trackers.at(r_job.id()).reduced(r_job);
 
     _console->debug("Reduce job done");
-    return grpc::Status::OK;
-  }
-
-  mapreduce::MappedJob m_job;
-  if (m_job.ParseFromString(task->job()))
-  {
-    _console->debug("Got map job");
-
-    _scheduler.task_done(task->id());
-    _job_trackers.at(m_job.id()).mapped(m_job);
-
-    _console->debug("Mapping job done");
     return grpc::Status::OK;
   }
 

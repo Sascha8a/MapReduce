@@ -42,6 +42,7 @@ private:
   void start_reduce();
 
 public:
+  bool map_phase_done();
   mapreduceAPI::JobStatus get_status();
   std::vector<std::pair<std::string, long>>  get_results();
   JobTracker(long id, FIFOScheduler* scheduler, std::vector<std::string> chunks, std::string code);

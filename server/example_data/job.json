@@ -1,6 +1,6 @@
 {
   "input": "shakespeare.txt",
-  "split": "line",
+  "split": "line64",
   "code": "word_count.py",
   "ip": "127.0.0.1",
   "port": "3000"

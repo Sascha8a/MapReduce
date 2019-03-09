@@ -25,6 +25,7 @@ private:
   std::string _master_uri;
   std::string _own_uri;
   std::shared_ptr<spdlog::logger> _console{spdlog::stderr_color_mt("Node")};
+  std::mutex _node_mutex;
 
 public:
   Node(std::string node_uri, bool debug)
