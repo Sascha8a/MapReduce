@@ -52,7 +52,6 @@ class Master {
     -_scheduler : FIFOScheduler
     -_nodes : std::vector<std::string>
     -_job_trackers : std::unordered_map<long, JobTracker>
-    +JobStart(grpc::ServerContext* context, const mapreduce::NewJob* job, mapreduce::Empty* response) : grpc::Status
     +RegisterNode(grpc::ServerContext* context, const mapreduce::NewNode* node, mapreduce::Empty* response) : grpc::Status
     +TaskDone(grpc::ServerContext* context, const mapreduce::Task* task, mapreduce::Empty* response) : grpc::Status
     +StartJob(std::vector<std::string> chunks, std::string code) : long

@@ -19,11 +19,6 @@ class MasterStub(object):
         request_serializer=internal__pb2.NewNode.SerializeToString,
         response_deserializer=internal__pb2.Empty.FromString,
         )
-    self.JobStart = channel.unary_unary(
-        '/mapreduce.Master/JobStart',
-        request_serializer=internal__pb2.NewJob.SerializeToString,
-        response_deserializer=internal__pb2.Empty.FromString,
-        )
     self.TaskDone = channel.unary_unary(
         '/mapreduce.Master/TaskDone',
         request_serializer=internal__pb2.Task.SerializeToString,
@@ -36,13 +31,6 @@ class MasterServicer(object):
   pass
 
   def RegisterNode(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
-  def JobStart(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -62,11 +50,6 @@ def add_MasterServicer_to_server(servicer, server):
       'RegisterNode': grpc.unary_unary_rpc_method_handler(
           servicer.RegisterNode,
           request_deserializer=internal__pb2.NewNode.FromString,
-          response_serializer=internal__pb2.Empty.SerializeToString,
-      ),
-      'JobStart': grpc.unary_unary_rpc_method_handler(
-          servicer.JobStart,
-          request_deserializer=internal__pb2.NewJob.FromString,
           response_serializer=internal__pb2.Empty.SerializeToString,
       ),
       'TaskDone': grpc.unary_unary_rpc_method_handler(

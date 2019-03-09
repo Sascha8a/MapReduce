@@ -1,1 +1,1 @@
-Server: Fixes CLI misspelling in node, cli, master
+Server: Adds doxygen-compatible documentation in header files

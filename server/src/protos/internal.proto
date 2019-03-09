@@ -65,7 +65,6 @@ message Task {
 
 service Master {
   rpc RegisterNode (NewNode) returns (Empty);
-  rpc JobStart (NewJob) returns (Empty);
   rpc TaskDone (Task) returns (Empty);
 }
 

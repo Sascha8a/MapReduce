@@ -62,20 +62,6 @@ grpc::Status Master::RegisterNode(grpc::ServerContext *context, const mapreduce:
   return grpc::Status::OK;
 }
 
-grpc::Status Master::JobStart(grpc::ServerContext *context, const mapreduce::NewJob *job, mapreduce::Empty *response)
-{
-  _console->info("New job from " + context->peer());
-  _console->debug("Job data\n" + job->data());
-  _console->debug("Job data end");
-  _console->debug("Job code\n" + job->code());
-  _console->debug("Job code end");
-  std::vector<std::string> chunks{chunk_data(job->data())};
-  _job_trackers.insert({_new_job_id, JobTracker(_new_job_id, &_scheduler, chunks, job->code())});
-  _new_job_id += 1;
-  response->Clear();
-  return grpc::Status::OK;
-}
-
 long Master::StartJob(std::vector<std::string> chunks, std::string code)
 {
   //TODO: Add insert mutex

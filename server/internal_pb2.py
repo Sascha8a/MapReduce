@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='mapreduce',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0einternal.proto\x12\tmapreduce\"\x1a\n\x07NewNode\x12\x0f\n\x07\x63onnstr\x18\x01 \x01(\t\"V\n\x06MapJob\x12\x0e\n\x06job_id\x18\x01 \x01(\x03\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x1f\n\x03\x65xt\x18\x03 \x01(\x0e\x32\x12.mapreduce.CodeExt\x12\r\n\x05\x63hunk\x18\x04 \x01(\t\"f\n\tReduceJob\x12\x0e\n\x06job_id\x18\x01 \x01(\x03\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x1f\n\x03\x65xt\x18\x03 \x01(\x0e\x32\x12.mapreduce.CodeExt\x12\x0b\n\x03key\x18\x04 \x01(\t\x12\r\n\x05value\x18\x05 \x03(\x05\"*\n\x0cKeyValuePair\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05\"?\n\tMappedJob\x12\n\n\x02id\x18\x01 \x01(\x03\x12&\n\x05pairs\x18\x02 \x03(\x0b\x32\x17.mapreduce.KeyValuePair\"5\n\nReducedJob\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x0b\n\x03key\x18\x02 \x01(\t\x12\x0e\n\x06result\x18\x03 \x01(\x03\"$\n\x06NewJob\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\t\"<\n\x03Job\x12\n\n\x02id\x18\x01 \x01(\x03\x12\r\n\x05\x63hunk\x18\x02 \x01(\t\x12\x0b\n\x03key\x18\x03 \x01(\t\x12\r\n\x05value\x18\x04 \x03(\x05\"\x07\n\x05\x45mpty\"\x1f\n\x04Task\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x0b\n\x03job\x18\x02 \x01(\x0c*\x1a\n\x07\x43odeExt\x12\x06\n\x02py\x10\x00\x12\x07\n\x03\x62in\x10\x01\x32\x9e\x01\n\x06Master\x12\x34\n\x0cRegisterNode\x12\x12.mapreduce.NewNode\x1a\x10.mapreduce.Empty\x12/\n\x08JobStart\x12\x11.mapreduce.NewJob\x1a\x10.mapreduce.Empty\x12-\n\x08TaskDone\x12\x0f.mapreduce.Task\x1a\x10.mapreduce.Empty2\xce\x01\n\x04Node\x12.\n\tStartTask\x12\x0f.mapreduce.Task\x1a\x10.mapreduce.Empty\x12*\n\x06JobGet\x12\x10.mapreduce.Empty\x1a\x0e.mapreduce.Job\x12\x33\n\tJobMapped\x12\x14.mapreduce.MappedJob\x1a\x10.mapreduce.Empty\x12\x35\n\nJobReduced\x12\x15.mapreduce.ReducedJob\x1a\x10.mapreduce.Empty2\x08\n\x06Workerb\x06proto3')
+  serialized_pb=_b('\n\x0einternal.proto\x12\tmapreduce\"\x1a\n\x07NewNode\x12\x0f\n\x07\x63onnstr\x18\x01 \x01(\t\"V\n\x06MapJob\x12\x0e\n\x06job_id\x18\x01 \x01(\x03\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x1f\n\x03\x65xt\x18\x03 \x01(\x0e\x32\x12.mapreduce.CodeExt\x12\r\n\x05\x63hunk\x18\x04 \x01(\t\"f\n\tReduceJob\x12\x0e\n\x06job_id\x18\x01 \x01(\x03\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x1f\n\x03\x65xt\x18\x03 \x01(\x0e\x32\x12.mapreduce.CodeExt\x12\x0b\n\x03key\x18\x04 \x01(\t\x12\r\n\x05value\x18\x05 \x03(\x05\"*\n\x0cKeyValuePair\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05\"?\n\tMappedJob\x12\n\n\x02id\x18\x01 \x01(\x03\x12&\n\x05pairs\x18\x02 \x03(\x0b\x32\x17.mapreduce.KeyValuePair\"5\n\nReducedJob\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x0b\n\x03key\x18\x02 \x01(\t\x12\x0e\n\x06result\x18\x03 \x01(\x03\"$\n\x06NewJob\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\t\"<\n\x03Job\x12\n\n\x02id\x18\x01 \x01(\x03\x12\r\n\x05\x63hunk\x18\x02 \x01(\t\x12\x0b\n\x03key\x18\x03 \x01(\t\x12\r\n\x05value\x18\x04 \x03(\x05\"\x07\n\x05\x45mpty\"\x1f\n\x04Task\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x0b\n\x03job\x18\x02 \x01(\x0c*\x1a\n\x07\x43odeExt\x12\x06\n\x02py\x10\x00\x12\x07\n\x03\x62in\x10\x01\x32m\n\x06Master\x12\x34\n\x0cRegisterNode\x12\x12.mapreduce.NewNode\x1a\x10.mapreduce.Empty\x12-\n\x08TaskDone\x12\x0f.mapreduce.Task\x1a\x10.mapreduce.Empty2\xce\x01\n\x04Node\x12.\n\tStartTask\x12\x0f.mapreduce.Task\x1a\x10.mapreduce.Empty\x12*\n\x06JobGet\x12\x10.mapreduce.Empty\x1a\x0e.mapreduce.Job\x12\x33\n\tJobMapped\x12\x14.mapreduce.MappedJob\x1a\x10.mapreduce.Empty\x12\x35\n\nJobReduced\x12\x15.mapreduce.ReducedJob\x1a\x10.mapreduce.Empty2\x08\n\x06Workerb\x06proto3')
 )
 
 _CODEEXT = _descriptor.EnumDescriptor(
@@ -559,8 +559,8 @@ _MASTER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=584,
-  serialized_end=742,
+  serialized_start=583,
+  serialized_end=692,
   methods=[
   _descriptor.MethodDescriptor(
     name='RegisterNode',
@@ -572,18 +572,9 @@ _MASTER = _descriptor.ServiceDescriptor(
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
-    name='JobStart',
-    full_name='mapreduce.Master.JobStart',
-    index=1,
-    containing_service=None,
-    input_type=_NEWJOB,
-    output_type=_EMPTY,
-    serialized_options=None,
-  ),
-  _descriptor.MethodDescriptor(
     name='TaskDone',
     full_name='mapreduce.Master.TaskDone',
-    index=2,
+    index=1,
     containing_service=None,
     input_type=_TASK,
     output_type=_EMPTY,
@@ -601,8 +592,8 @@ _NODE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=1,
   serialized_options=None,
-  serialized_start=745,
-  serialized_end=951,
+  serialized_start=695,
+  serialized_end=901,
   methods=[
   _descriptor.MethodDescriptor(
     name='StartTask',
@@ -652,8 +643,8 @@ _WORKER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=2,
   serialized_options=None,
-  serialized_start=953,
-  serialized_end=961,
+  serialized_start=903,
+  serialized_end=911,
   methods=[
 ])
 _sym_db.RegisterServiceDescriptor(_WORKER)
