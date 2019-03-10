@@ -30,7 +30,8 @@ int grpc_pick_unused_port(void)
 
 APIServer::APIServer(int port, Master *master, bool debug)
 {
-  if (debug) {
+  if (debug)
+  {
     _console->set_level(spdlog::level::debug);
   }
 
@@ -79,13 +80,11 @@ void APIServer::start_server(short unsigned int port)
       _console->debug("Received JobStatusRequest");
 
       const long job_id{request.job_id()};
-      const mapreduceAPI::JobStatus status{_master->get_status(job_id)};
 
-      mapreduceAPI::JobStatusResponse response;
-      response.set_status(status);
+      mapreduceAPI::JobStatusResponse response{_master->get_status(job_id)};
       response.set_job_id(job_id);
 
-      if (status == mapreduceAPI::JobStatus::finished)
+      if (response.status() == mapreduceAPI::JobStatus::finished)
       {
         for (auto &&result : _master->get_results(job_id))
         {

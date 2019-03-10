@@ -1,22 +1,29 @@
 #include "JobTracker.hpp"
-
 #include "internal.grpc.pb.h"
 #include "internal.pb.h"
 
-mapreduceAPI::JobStatus JobTracker::get_status()
+mapreduceAPI::JobStatusResponse JobTracker::get_status()
 {
+  mapreduceAPI::JobStatusResponse response;
+
   if (_map_tasks_left)
   {
-    return mapreduceAPI::JobStatus::map_phase;
+    response.set_map_tasks(_map_tasks);
+    response.set_map_tasks_remaining(_map_tasks_left);
+    response.set_status(mapreduceAPI::JobStatus::map_phase);
   }
   else if (_reduce_tasks_left)
   {
-    return mapreduceAPI::JobStatus::reduce_phase;
+    response.set_reduce_tasks(_reduce_tasks);
+    response.set_reduce_tasks_remaining(_reduce_tasks_left);
+    response.set_status(mapreduceAPI::JobStatus::reduce_phase);
   }
   else
   {
-    return mapreduceAPI::JobStatus::finished;
+    response.set_status(mapreduceAPI::JobStatus::finished);
   }
+
+  return response;
 }
 
 std::vector<std::pair<std::string, long>> JobTracker::get_results()
@@ -37,6 +44,7 @@ void JobTracker::start_map()
   }
 
   _map_tasks_left = _input.size();
+  _map_tasks = _input.size();
   _input.clear();
 }
 
@@ -57,8 +65,8 @@ void JobTracker::start_reduce()
 
     _scheduler->add_task(job.SerializeAsString());
   }
-
   _reduce_tasks_left = _map_keys.size();
+  _reduce_tasks = _map_keys.size();
   _map_results.clear();
   _map_keys.clear();
 }

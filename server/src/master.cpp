@@ -16,7 +16,6 @@
 int main(int argc, char** argv)
 {
   CLI::App app{"Controller for the MapReduce project"};
-
   std::string port{"50050"};
   app.add_option("-p,--port", port, "The port of this master; 50050 by default");
 
@@ -26,8 +25,8 @@ int main(int argc, char** argv)
   bool debug{false};
   app.add_flag("-d,--debug", debug, "Enable debug output");
 
-  int num_schedulers{2};
-  app.add_option("-s,--schedulers", num_schedulers, "Number of scheduler threads");
+  int num_schedulers{1};
+  // app.add_option("-s,--schedulers", num_schedulers, "Number of scheduler threads");
 
 
   CLI11_PARSE(app, argc, argv);

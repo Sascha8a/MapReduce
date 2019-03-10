@@ -19,7 +19,9 @@ class JobTracker
 {
 private:
   long _job_id;
+  long _map_tasks;
   long _map_tasks_left;
+  long _reduce_tasks;
   long _reduce_tasks_left;
   std::vector<std::pair<std::string, long>> _results;
   std::string _code;
@@ -43,7 +45,7 @@ private:
 
 public:
   bool map_phase_done();
-  mapreduceAPI::JobStatus get_status();
+  mapreduceAPI::JobStatusResponse get_status();
   std::vector<std::pair<std::string, long>>  get_results();
   JobTracker(long id, FIFOScheduler* scheduler, std::vector<std::string> chunks, std::string code);
   ~JobTracker() {};

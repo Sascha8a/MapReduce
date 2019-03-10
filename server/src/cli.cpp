@@ -1,7 +1,6 @@
 #include <grpcpp/grpcpp.h>
 #include <vector>
 #include <fmt/format.h>
-
 #include "asio_protobuf_util.hpp"
 #include "internal.grpc.pb.h"
 #include "internal.pb.h"
@@ -71,7 +70,7 @@ std::vector<std::string> input_linewise(std::string input_file_uri)
   return results;
 }
 
-std::vector<std::string> input_linewise(std::string input_file_uri, int chunk_size=1)
+std::vector<std::string> input_linewise(std::string input_file_uri, int chunk_size = 1)
 {
   std::vector<std::string> results;
   std::ifstream fstream;
@@ -95,7 +94,8 @@ std::vector<std::string> input_linewise(std::string input_file_uri, int chunk_si
     intermediate_result += (line + " \n");
     counter += 1;
 
-    if (counter == chunk_size) {
+    if (counter == chunk_size)
+    {
       results.push_back(intermediate_result);
 
       intermediate_result = "";
@@ -182,13 +182,13 @@ void create_job(std::vector<std::string> &data, std::vector<std::string> &code, 
   request.set_num_code_chunks(code.size());
   request.set_num_data_chunks(data.size());
 
-  spdlog::info("Sending JobCreationRequest...");
+  spdlog::debug("Sending JobCreationRequest...");
   asio_utils::send_proto(socket, request);
 
   asio_utils::MessageType message_type;
   asio_utils::receive_proto_message_type(socket, message_type);
 
-  spdlog::info("Receiving JobCreationResponse...");
+  spdlog::debug("Receiving JobCreationResponse...");
   mapreduceAPI::JobCreationResponse response;
   asio_utils::receive_proto_message(socket, response);
   spdlog::info("Port for data upload: {}", response.port());
@@ -268,10 +268,12 @@ void get_status(long job_id, std::string master_ip, std::string master_port)
   else if (response.status() == mapreduceAPI::JobStatus::map_phase)
   {
     spdlog::info("Status: Job in map phase");
+    spdlog::info("Progress: {}/{} jobs left", response.map_tasks_remaining(), response.map_tasks());
   }
   else if (response.status() == mapreduceAPI::JobStatus::reduce_phase)
   {
     spdlog::info("Status: Job in reduce phase");
+    spdlog::info("Progress: {}/{} jobs left", response.reduce_tasks_remaining(), response.reduce_tasks());
   }
   else if (response.status() == mapreduceAPI::JobStatus::notfound)
   {

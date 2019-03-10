@@ -7,7 +7,7 @@
 #include "internal.grpc.pb.h"
 #include "internal.pb.h"
 
-mapreduceAPI::JobStatus Master::get_status(long job_id)
+mapreduceAPI::JobStatusResponse Master::get_status(long job_id)
 {
   try
   {
@@ -15,7 +15,10 @@ mapreduceAPI::JobStatus Master::get_status(long job_id)
   }
   catch (const std::exception &e)
   {
-    return mapreduceAPI::JobStatus::notfound;
+    mapreduceAPI::JobStatusResponse response;
+    response.set_status(mapreduceAPI::JobStatus::notfound);
+    
+    return response;
   }
 }
 

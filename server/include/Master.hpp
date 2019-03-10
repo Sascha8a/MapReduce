@@ -31,9 +31,9 @@ public:
    * @brief Returns the current status of a particular job
    * 
    * @param job_id  ID of the job
-   * @return mapreduceAPI::JobStatus Status 
+   * @return mapreduceAPI::JobStatusResponse Status 
    */
-  mapreduceAPI::JobStatus get_status(long job_id);
+  mapreduceAPI::JobStatusResponse get_status(long job_id);
 
   /**
    * @brief Get the results of a jbo

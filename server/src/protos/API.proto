@@ -40,6 +40,10 @@ message JobStatusResponse {
   int64 job_id = 1;
   JobStatus status = 2;
   repeated KeyValuePair results = 3;
+  int32 map_tasks = 4;
+  int32 map_tasks_remaining = 5;
+  int32 reduce_tasks = 6;
+  int32 reduce_tasks_remaining = 7;
 }
 
 message JobDeletionApproval {

@@ -1,1 +1,1 @@
-Server: Replaces / Cleans string manipulation in favour of fmt
+Server: Unbloats CLI output by changing logging levels; Adds progress to cli job status
