@@ -1,1 +1,1 @@
-Server: Fixes a race condition on the Node, which resulted in a segfault
+Server: Replaces / Cleans string manipulation in favour of fmt

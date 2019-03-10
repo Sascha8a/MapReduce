@@ -59,7 +59,7 @@ std::vector<std::string> chunk_data(std::string data)
 
 grpc::Status Master::RegisterNode(grpc::ServerContext *context, const mapreduce::NewNode *node, mapreduce::Empty *response)
 {
-  _console->info("New connection fron Node " + context->peer());
+  _console->info("New connection fron Node {}", context->peer());
 
   _scheduler.add_node(node->connstr());
 
@@ -70,7 +70,7 @@ grpc::Status Master::RegisterNode(grpc::ServerContext *context, const mapreduce:
 long Master::StartJob(std::vector<std::string> chunks, std::string code)
 {
   //TODO: Add insert mutex
-  _console->info("Received new job - id:" + std::to_string(_new_job_id));
+  _console->info("Received new job - id: {}", std::to_string(_new_job_id));
   _job_trackers.insert({_new_job_id, JobTracker(_new_job_id, &_scheduler, chunks, code)});
   _new_job_id += 1;
 

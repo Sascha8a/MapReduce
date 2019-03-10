@@ -32,7 +32,7 @@ int main(int argc, char** argv)
 
   CLI11_PARSE(app, argc, argv);
 
-  std::string server_address("0.0.0.0:" + port);
+  std::string server_address(fmt::format("0.0.0.0:{}", port));
 
   Master service{debug, num_schedulers};
   grpc::ServerBuilder builder;
@@ -40,7 +40,7 @@ int main(int argc, char** argv)
   builder.RegisterService(&service);
 
   std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
-  spdlog::info("Master: " + server_address);
+  spdlog::info("Master: {}", server_address);
 
   APIServer api{std::atoi(api_port.c_str()), &service, debug};
 

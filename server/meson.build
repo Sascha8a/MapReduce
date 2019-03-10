@@ -5,6 +5,7 @@ project('MapReduce', 'cpp',
         default_options : ['cpp_std=c++14', 'warning_level=3', 'werror=true'])
 
 thread_dep = dependency('threads')
+fmt_dep = dependency('fmt')
 
 # begin asio: https://think-async.com/Asio/
 add_global_arguments('-I' + get_option('asio_include_dir'), language : 'cpp')
@@ -77,5 +78,5 @@ executable('node',
 executable('cli',
            sources : cli_src,
            include_directories : inc_dir,
-           dependencies : [thread_dep, protobuf_dep, grpc_dep, grpcpp_dep]
+           dependencies : [thread_dep, fmt_dep, protobuf_dep, grpc_dep, grpcpp_dep]
           )

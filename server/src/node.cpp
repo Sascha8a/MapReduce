@@ -77,15 +77,15 @@ int main(int argc, char **argv)
   }
 
   grpc::ServerBuilder builder;
-  Node service{"localhost:" + port, debug};
-  builder.AddListeningPort("0.0.0.0:" + port, grpc::InsecureServerCredentials());
+  Node service{fmt::format("localhost:{}", port), debug};
+  builder.AddListeningPort(fmt::format("0.0.0.0:{}", port), grpc::InsecureServerCredentials());
   builder.RegisterService(&service);
   std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
 
   try
   {
     service.register_at_master(masteruri);
-    spdlog::info("Listening on port " + port);
+    spdlog::info("Listening on port {}", port);
     server->Wait();
   }
   catch (const std::exception &e)

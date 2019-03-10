@@ -82,7 +82,7 @@ void JobTracker::mapped(mapreduce::MappedJob m_job)
   }
 
   _map_tasks_left -= 1;
-  _console->info("Map tasks left: " + std::to_string(_map_tasks_left));
+  _console->info("Map tasks left: {}", std::to_string(_map_tasks_left));
 
   if (!_map_tasks_left)
   {
@@ -95,7 +95,7 @@ void JobTracker::reduced(mapreduce::ReducedJob job)
 {
   _results.push_back(std::make_pair(job.key(), job.result()));
   _reduce_tasks_left -= 1;
-  _console->info("Reduce tasks left: " + std::to_string(_reduce_tasks_left));
+  _console->info("Reduce tasks left:  {}", std::to_string(_reduce_tasks_left));
 
   if (!_reduce_tasks_left)
   {
@@ -106,7 +106,7 @@ void JobTracker::reduced(mapreduce::ReducedJob job)
 
 JobTracker::JobTracker(long id, FIFOScheduler *scheduler, std::vector<std::string> input, std::string code)
 {
-  _console = spdlog::stderr_color_mt("JobTracker " + std::to_string(id));
+  _console = spdlog::stderr_color_mt(fmt::format("JobTracker {}", id));
 
   _scheduler = scheduler;
   _job_id = id;

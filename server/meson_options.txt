@@ -2,5 +2,5 @@ option('asio_include_dir', type : 'string', value : '/usr/include/asio/include',
 option('spdlog_include_dir', type : 'string', value : '/usr/include/spdlog/include', description : 'the include dir of spdlog')
 option('clipp_include_dir', type : 'string', value : '', description : 'the include dir of clipp')
 option('cli11_include_dir', type : 'string', value : '', description : 'the dir containing CLI11.hpp')
-option('fmt_include_dir', type : 'string', value : '', description : 'the include dir of fmt')
+option('fmt_include_dir', type : 'string', value : '/usr/local/include/fmt', description : 'the include dir of fmt')
 option('json_include_dir', type : 'string', value : '', description : 'the include dir of json')

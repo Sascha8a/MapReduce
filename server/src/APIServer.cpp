@@ -109,7 +109,7 @@ void APIServer::start_server(short unsigned int port)
 
 void APIServer::start_data_receiver(short unsigned int port, long num_code_chunks, long num_data_chunks)
 {
-  _console->debug("Waiting for job creation data on port " + std::to_string(port));
+  _console->debug("Waiting for job creation data on port {}", std::to_string(port));
 
   asio::io_context io_context;
   asio::ip::tcp::endpoint endpoint{asio::ip::tcp::v4(), port};

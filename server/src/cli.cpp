@@ -1,5 +1,6 @@
 #include <grpcpp/grpcpp.h>
 #include <vector>
+#include <fmt/format.h>
 
 #include "asio_protobuf_util.hpp"
 #include "internal.grpc.pb.h"
@@ -13,7 +14,7 @@ using namespace nlohmann;
 
 std::string get_file(std::string filename)
 {
-  spdlog::info("Reading " + filename + "...");
+  spdlog::info(fmt::format("Reading {0}...", filename));
   std::ifstream fstream;
   std::stringstream sstream;
 
@@ -46,7 +47,7 @@ std::vector<std::string> input_linewise(std::string input_file_uri)
   }
   catch (const std::exception &e)
   {
-    spdlog::error("Error opening input file: {}", e.what());
+    spdlog::error(fmt::format("Error opening input file: {}", e.what()));
     std::exit(0);
   }
 
@@ -59,7 +60,7 @@ std::vector<std::string> input_linewise(std::string input_file_uri)
 
   if (results.size())
   {
-    spdlog::info("Got {} lines", results.size());
+    spdlog::info(fmt::format("Got {} lines", results.size()));
   }
   else
   {
@@ -84,11 +85,10 @@ std::vector<std::string> input_linewise(std::string input_file_uri, int chunk_si
   }
   catch (const std::exception &e)
   {
-    spdlog::error("Error opening input file: {}", e.what());
+    spdlog::info(fmt::format("Error opening input file: {}", e.what()));
     std::exit(0);
   }
-
-  spdlog::info("Reading {}...", input_file_uri);
+  spdlog::info(fmt::format("Reading {}...", input_file_uri));
   while (getline(fstream, line))
   {
     strip_unicode(line);
@@ -107,7 +107,7 @@ std::vector<std::string> input_linewise(std::string input_file_uri, int chunk_si
 
   if (results.size())
   {
-    spdlog::info("Got {} lines", results.size());
+    spdlog::info(fmt::format("Got {} lines", results.size()));
   }
   else
   {
@@ -132,7 +132,7 @@ long upload_data(std::vector<std::string> &code, std::vector<std::string> &data,
   }
   catch (const std::exception &e)
   {
-    spdlog::error("Error connecting: {}", e.what());
+    spdlog::error(fmt::format("Error connecting: {}", e.what()));
     std::exit(0);
   }
 

@@ -18,8 +18,6 @@ FIFOScheduler::FIFOScheduler(bool debug)
 void FIFOScheduler::send_to_node(Task t, SchedulerNode node)
 {
   std::thread thread{[t, node](){
-    // _console->debug("Sending Task " + std::to_string(t.id) + " to " + node.connstr);
-
     auto channel{grpc::CreateChannel(node.connstr, grpc::InsecureChannelCredentials())};
     auto stub{mapreduce::Node::NewStub(channel)};
 
@@ -29,15 +27,6 @@ void FIFOScheduler::send_to_node(Task t, SchedulerNode node)
     t_msg.set_id(t.id);
     t_msg.set_job(t.job);
     grpc::Status status{stub->StartTask(&context, t_msg, &response)};
-
-    if (status.ok())
-    {
-      // _console->debug("Task " + std::to_string(t.id) + " delivered");
-    }
-    else
-    {
-      // _console->error("Error delivering task " + std::to_string(t.id) + ": " + status.error_message());
-    }
   }};
 
   thread.detach();
@@ -98,13 +87,13 @@ void FIFOScheduler::add_node(std::string connstr)
   new_node.free = true;
   _free_nodes.enqueue(new_node);
 
-  _console->info("Node added: " + connstr);
+  _console->info("Node added: {}", connstr);
 }
 
 void FIFOScheduler::add_task(Task task)
 {
   _tasks.enqueue(task);
-  _console->debug("New task added: " + std::to_string(task.id));
+  _console->debug("New task added: {}", std::to_string(task.id));
 }
 
 void FIFOScheduler::add_task(std::string job)
@@ -123,5 +112,5 @@ void FIFOScheduler::task_done(long id)
   _full_nodes.erase(id);
   _free_nodes.enqueue(node);
 
-  _console->debug("Task done: " + std::to_string(id));
+  _console->debug("Task done: {}", std::to_string(id));
 }
