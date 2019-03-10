@@ -254,10 +254,10 @@ void get_status(long job_id, std::string master_ip, std::string master_port)
 
   mapreduceAPI::JobStatusRequest request;
   request.set_job_id(job_id);
-  spdlog::info("Sending JobStatusRequest...");
+  spdlog::debug("Sending JobStatusRequest...");
   asio_utils::send_proto(socket, request);
 
-  spdlog::info("Receiving JobStatusResponse...");
+  spdlog::debug("Receiving JobStatusResponse...");
   mapreduceAPI::JobStatusResponse response;
   asio_utils::receive_proto_message(socket, response);
 

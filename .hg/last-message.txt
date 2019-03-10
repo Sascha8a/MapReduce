@@ -1,1 +1,1 @@
-Server: Unbloats CLI output by changing logging levels; Adds progress to cli job status
+Docs: Adds technologies; Fixes typos; Adds syntax highlighting;
